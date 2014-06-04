@@ -1,0 +1,24 @@
+VERTFOLIA - expense tracking with a tree structure
+DJANGO - 1.6
+
+Currency corresponds to a model, but all having DecimalField with 2 decimal
+places. Conversion must be done outside models
+
+Every account has a parent, root account is the user's name whose parent is
+null
+
+First, find ancestors naively (check if parent corresponds to account queried)
+
+Use Ajax to avoid page reloads (Dajax?)
+
+Accounts have multiple subaccounts and any number of transactions
+
+Accounts have a sign modifier (liabilities, equity and income are -1)
+
+heitor (1) +- assets (1) +-
+						 +-
+		   +- expenses (1)
+		   +- income (-1) +- juros (-1)
+						  +-
+
+see lantana for tree code
