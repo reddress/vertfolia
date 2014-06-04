@@ -22,3 +22,12 @@ heitor (1) +- assets (1) +-
 						  +-
 
 see lantana for tree code
+
+export data from ALE sheets
+(date as YMD hh:mm:ss , value / Debit / Credit)
+
+import using account short name, warn if account is not found
+
+cannot export ALE sheets accounts becaues they don't have parents
+
+account has long and short names
