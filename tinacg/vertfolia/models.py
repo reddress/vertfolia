@@ -23,6 +23,7 @@ class Transaction(models.Model):
     description = models.CharField(max_length=200)
     date = models.DateTimeField(default=datetime.now)
     value = models.DecimalField(max_digits=14, decimal_places=2)
+    currency = models.ForeignKey(Currency)
     debit = models.ForeignKey(Account, related_name="+")
     credit = models.ForeignKey(Account, related_name="+")
     
