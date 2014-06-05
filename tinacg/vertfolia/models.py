@@ -3,6 +3,8 @@ from datetime import datetime, timedelta
 from django.db import models
 from django.contrib.auth.models import User
 
+# FIXME: get account balances must accept user as parameter
+
 # Transactions prior to 10 years ago may be ignored
 # FIXME to fixed date like Jan. 1, 1900
 MIN_DATE = datetime.now() - timedelta(days=3650)

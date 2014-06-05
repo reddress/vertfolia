@@ -3,6 +3,8 @@ from django.http import HttpResponse
 
 from .models import Account, all_accounts_balance_change
 
+# FIXME: get top account for current user name
+
 def index(request):
     top_account = Account.objects.get(short_name="tina")
     account_balances = all_accounts_balance_change()
