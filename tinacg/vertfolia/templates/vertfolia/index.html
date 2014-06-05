@@ -1,0 +1,39 @@
+{% load staticfiles %}
+{% load vertfolia_tags %}
+
+<head>
+  <!--
+	<link rel="stylesheet" href="{% static "js/jquery.treeview.css" %}" />
+	<link rel="stylesheet" href="{% static "js/screen.css" %}"/>
+	<script src="{% static "js/jquery-1.11.0.min.js" %}"></script>
+	<script src="{% static "js/jquery.treeview.js" %}"></script>
+	<script type="text/javascript">
+  $(function () {
+	$("#tree").treeview({
+	  collapsed: true,
+	  animated: "fast",
+	  control:"#sidetreecontrol",
+	  prerendered: true,
+	  persist: "location"
+	});
+  })
+-->
+	</script>
+  </head>
+
+Welcome to VertFolia
+
+<div id="sidetree">
+  <div class="treeheader">&nbsp;</div>
+  <div id="sidetreecontrol"> <a href="?#">Collapse All</a> | <a href="?#">Expand All</a> </div>
+
+  {% display_tree top_account account_balances %}
+
+</div>
+
+<button id="mybutton">Click me</button>
+
+<script>
+  document.getElementById("mybutton").addEventListener('click', function (event) {
+  document.getElementById("account_balance_2").innerHTML = "ok" });
+</script>
