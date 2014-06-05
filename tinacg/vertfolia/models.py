@@ -11,6 +11,12 @@ class Currency(models.Model):
     def __str__(self):
         return self.short_name
 
+###
+# How to link account and transaction to Django User?
+###
+# add user field to both because there may be pages that show details
+# for individual entries
+###
 class Account(models.Model):
     long_name = models.CharField(max_length=100)
     short_name = models.CharField(max_length=10)
