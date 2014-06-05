@@ -18,8 +18,10 @@ class Currency(models.Model):
 # for individual entries
 ###
 class Account(models.Model):
+    # user = ...
     long_name = models.CharField(max_length=100)
     short_name = models.CharField(max_length=10)
+    # sign_modifier = integer field
     parent = models.ForeignKey(Account, null=True, blank=True)
 
     def __str__(self):
