@@ -12,7 +12,7 @@ class Currency(models.Model):
         return self.short_name
 
 ###
-# How to link account and transaction to Django User?
+# How to link account and transaction to Django User? See mapcal
 ###
 # add user field to both because there may be pages that show details
 # for individual entries
