@@ -7,7 +7,8 @@ from django.template import RequestContext
 from django.utils import timezone
 
 from .models import Account, Currency, Transaction
-from .models import account_balance_change, all_accounts_balance_change
+# from .models import account_balance_change, all_accounts_balance_change
+from .models import leaf_to_root_balance_change, leaf_to_root_balance_change_JSON
 
 def print_balance_change(balance_change):
     output_str = ""
@@ -18,9 +19,11 @@ def print_balance_change(balance_change):
 
 def index(request):
     top_account = Account.objects.get(parent=None, user=request.user)
-    account_balances = all_accounts_balance_change(request.user,
+    
+    #    account_balances = all_accounts_balance_change(request.user,
+    #                                                   end_date=timezone.now())
+    account_balances = leaf_to_root_balance_change_JSON(request.user,
                                                    end_date=timezone.now())
-
     return render(request, 'vertfolia/index.html',
                   { 'top_account': top_account,
                     'account_balances': account_balances,
@@ -49,20 +52,21 @@ def add_transaction(request):
 
         new_balances = {}
         
-        while debit_account:
-            new_balances[debit_account.pk] = print_balance_change(
-                account_balance_change(request.user, debit_account,
-                                       end_date=timezone.now()))
-            debit_account = debit_account.parent
+        # while debit_account:
+        #     new_balances[debit_account.pk] = print_balance_change(
+        #         account_balance_change(request.user, debit_account,
+        #                                end_date=timezone.now()))
+        #     debit_account = debit_account.parent
 
-        while credit_account:
-            new_balances[credit_account.pk] = print_balance_change(
-                account_balance_change(request.user, credit_account,
-                                       end_date=timezone.now()))
-            credit_account = credit_account.parent
-    
+        # while credit_account:
+        #     new_balances[credit_account.pk] = print_balance_change(
+        #         account_balance_change(request.user, credit_account,
+        #                                end_date=timezone.now()))
+        #     credit_account = credit_account.parent
+
+        new_balances = leaf_to_root_balance_change_JSON(request.user,
+                                                        end_date=timezone.now())
         if request.is_ajax():
-            print(json.dumps(new_balances))
             return HttpResponse(json.dumps(new_balances),
                                 mimetype="application/json")
         return HttpResponse("Not an ajax request.")

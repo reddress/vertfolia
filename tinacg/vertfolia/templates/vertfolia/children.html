@@ -13,16 +13,11 @@
 		<div class="hitarea expandable-hitarea"></div>
 	  {% endif %}
 	  
-	  <a href="?#">
+	  <a onclick="show_transactions({{ child.id }})">
 	  {{ child.long_name }}
 		<span id="account_balance_{{ child.id }}">
-	  {% for moneyunit in account_balances|key:child.id %}
-		{% if account_balances|key:child.id|key:moneyunit != 0 %}
-		  {{ moneyunit }}
-		  {{ account_balances|key:child.id|key:moneyunit|floatformat:2 }}
-		{% endif %}
-	  {% endfor %}
-	  </span>
+			{{ account_balances|key:child.id }} 
+		</span>
 	  </a>
 	{% if child.children.count > 0 %}
 	  {% display_tree child account_balances False %}
@@ -30,3 +25,14 @@
 	</li>
   {% endfor %}
 </ul>
+
+<!-- previous money display 
+
+	  {% for moneyunit in account_balances|key:child.id %}
+		{% if account_balances|key:child.id|key:moneyunit != 0 %}
+		  {{ moneyunit }}
+		  {{ account_balances|key:child.id|key:moneyunit|floatformat:2 }}
+		{% endif %}
+	  {% endfor %}
+
+-->
