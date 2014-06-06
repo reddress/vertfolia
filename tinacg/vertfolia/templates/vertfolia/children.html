@@ -8,24 +8,25 @@
 {% endif %}
 
   {% for child in children %}
-    <li{% if child.children.count > 0 %} class="expandable"{% endif %}>
-      {% if child.children.count > 0 %}
-        <div class="hitarea expandable-hitarea"></div>
-      {% endif %}
-      
-	  <a id="account_balance_{{ child.id }}" href="?#">
+	<li{% if child.children.count > 0 %} class="expandable"{% endif %}>
+	  {% if child.children.count > 0 %}
+		<div class="hitarea expandable-hitarea"></div>
+	  {% endif %}
+	  
+	  <a href="?#">
 	  {{ child.long_name }}
-
-      {% for moneyunit in account_balances|key:child.id %}
-        {% if account_balances|key:child.id|key:moneyunit > 0 %}
-          {{ moneyunit }}
-          {{ account_balances|key:child.id|key:moneyunit|floatformat:2 }}
-        {% endif %}
-      {% endfor %}
+		<span id="account_balance_{{ child.id }}">
+	  {% for moneyunit in account_balances|key:child.id %}
+		{% if account_balances|key:child.id|key:moneyunit != 0 %}
+		  {{ moneyunit }}
+		  {{ account_balances|key:child.id|key:moneyunit|floatformat:2 }}
+		{% endif %}
+	  {% endfor %}
+	  </span>
 	  </a>
 	{% if child.children.count > 0 %}
 	  {% display_tree child account_balances False %}
 	{% endif %}
-    </li>
+	</li>
   {% endfor %}
 </ul>

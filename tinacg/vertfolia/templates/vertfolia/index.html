@@ -9,7 +9,6 @@
 	<script type="text/javascript">
   $(function () {
 	$("#tree").treeview({
-	 // collapsed: true,
 	  animated: "fast",
 	  control:"#sidetreecontrol",
 	  prerendered: true,
@@ -20,10 +19,60 @@
   </head>
 
 Welcome to VertFolia, {{ user.username }}!
+{{ time }}
 
-<div id="sidetree">
-  <div class="treeheader">&nbsp;</div>
-  <div id="sidetreecontrol"> <a href="?#">Collapse All</a> | <a href="?#">Expand All</a> </div>
-
-  {% display_tree top_account account_balances True %}
+<div id="account_tree">
+{% include "vertfolia/tree.html" %}
 </div>
+
+<!-- later: modal window for adding transactions and accounts -->
+
+<form id="add_transaction_form">
+  <!-- action="{% url 'add_transaction' %}" method="get"> -->
+  {% csrf_token %}
+  desc: <input name="description" value="default desc"><br>
+  value: <input name="value" value="10"><br>
+  debit acct: <input name="debit" value="7"><br>
+  credit acct: <input name="credit" value="6">
+  <input type="submit">
+</form>
+
+<script>
+  var request;
+  $("#add_transaction_form").submit(function (event) {
+  if (request) {
+  request.abort();
+  }
+
+  var form = $(this);
+  var inputs = form.find("hidden, input, select");
+  var serializedData = form.serialize();
+
+  inputs.prop("disabled", true);
+  request = $.ajax({
+  url: "{% url 'add_transaction' %}",
+  type: "post",
+  data: serializedData
+  });
+
+  request.success(function (response, textStatus, jqXHR) {
+	//	alert(response);
+  //	$('#account_tree').html(response);
+  $.each(response, function (key, val) {
+  //	alert(key + val);
+  $('#account_balance_'+key).html(val);
+  });
+  
+  });
+
+  request.fail(function (jqXHR, textStatus, errorThrown) {
+  alert("ADD TRANSACTION error: " + errorThrown);
+  });
+
+  request.always(function () {
+  inputs.prop("disabled", false);
+  });
+
+  event.preventDefault();
+  });
+</script>

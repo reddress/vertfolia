@@ -10,6 +10,7 @@ from django.utils import timezone
 # Transactions prior to 10 years ago may be ignored
 # FIXME to fixed date like Jan. 1, 1900
 MIN_DATE = timezone.now() - timedelta(days=3650)
+MAX_DATE = timezone.now() + timedelta(days=3650)
 
 class Currency(models.Model):
     class Meta:
@@ -59,22 +60,24 @@ class MoneyUnit:
             raise ValueError(error_msg)
         
 def account_balance_change(user, account, start_date=MIN_DATE,
-                           end_date=timezone.now()):
+                           end_date=MAX_DATE):
     balance_change = {}
     
     for currency in Currency.objects.all():
         balance_change[currency.short_name] = 0
         
-    debit_transactions = (Transaction.objects
+    debit_transactions = (Transaction.objects.select_related('debit',
+                                                             'currency',
+                                                             'parent')
                           .filter(user=user)
                           .filter(date__gte=start_date, date__lte=end_date)
-                          .filter(debit=account)
-                          .select_related('debit'))
-    credit_transactions = (Transaction.objects
+                          .filter(debit=account))
+    credit_transactions = (Transaction.objects.select_related('credit',
+                                                              'currency',
+                                                              'parent')
                            .filter(user=user)
                            .filter(date__gte=start_date, date__lte=end_date)
-                           .filter(credit=account)
-                           .select_related('credit'))
+                           .filter(credit=account))
     for transaction in debit_transactions:
         balance_change[transaction.currency.short_name] += (
             transaction.value * account.sign_modifier) 
@@ -94,7 +97,7 @@ def account_balance_change(user, account, start_date=MIN_DATE,
     return balance_change
 
 def all_accounts_balance_change(user, start_date=MIN_DATE,
-                                end_date=timezone.now()):
+                                end_date=MAX_DATE):
     balance_changes = {}
     for account in Account.objects.all():
         balance_changes[account.id] = account_balance_change(
