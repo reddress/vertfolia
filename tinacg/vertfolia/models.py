@@ -69,15 +69,15 @@ def account_balance_change(user, account, start_date=MIN_DATE,
     debit_transactions = (Transaction.objects.select_related('debit',
                                                              'currency',
                                                              'parent')
-                          .filter(user=user)
-                          .filter(date__gte=start_date, date__lte=end_date)
-                          .filter(debit=account))
+                          .filter(user=user,
+                                  date__gte=start_date, date__lte=end_date,
+                                  debit=account))
     credit_transactions = (Transaction.objects.select_related('credit',
                                                               'currency',
                                                               'parent')
-                           .filter(user=user)
-                           .filter(date__gte=start_date, date__lte=end_date)
-                           .filter(credit=account))
+                           .filter(user=user,
+                                   date__gte=start_date, date__lte=end_date,
+                                   credit=account))
     for transaction in debit_transactions:
         balance_change[transaction.currency.short_name] += (
             transaction.value * account.sign_modifier) 
