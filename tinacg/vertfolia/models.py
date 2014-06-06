@@ -2,13 +2,14 @@ from datetime import datetime, timedelta
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 # FIXME: get account balances must accept user as parameter
 # FIXME: add view for last 5 transactions added
 
 # Transactions prior to 10 years ago may be ignored
 # FIXME to fixed date like Jan. 1, 1900
-MIN_DATE = datetime.now() - timedelta(days=3650)
+MIN_DATE = timezone.now() - timedelta(days=3650)
 
 class Currency(models.Model):
     class Meta:
@@ -33,7 +34,7 @@ class Account(models.Model):
 class Transaction(models.Model):
     user = models.ForeignKey(User)
     description = models.CharField(max_length=200)
-    date = models.DateTimeField(default=datetime.now)
+    date = models.DateTimeField(default=timezone.now)
     value = models.DecimalField(max_digits=14, decimal_places=2)
     currency = models.ForeignKey(Currency)
     debit = models.ForeignKey(Account, related_name="+")
@@ -57,19 +58,23 @@ class MoneyUnit:
             error_msg = "Adding amounts of different currencies is not supported."
             raise ValueError(error_msg)
         
-def account_balance_change(account, start_date=MIN_DATE,
-                           end_date=datetime.now()):
+def account_balance_change(user, account, start_date=MIN_DATE,
+                           end_date=timezone.now()):
     balance_change = {}
     
     for currency in Currency.objects.all():
         balance_change[currency.short_name] = 0
         
-    debit_transactions = (Transaction.objects.select_related('debit')
+    debit_transactions = (Transaction.objects
+                          .filter(user=user)
                           .filter(date__gte=start_date, date__lte=end_date)
-                          .filter(debit=account))
-    credit_transactions = (Transaction.objects.select_related('credit')
-                          .filter(date__gte=start_date, date__lte=end_date)
-                          .filter(credit=account))
+                          .filter(debit=account)
+                          .select_related('debit'))
+    credit_transactions = (Transaction.objects
+                           .filter(user=user)
+                           .filter(date__gte=start_date, date__lte=end_date)
+                           .filter(credit=account)
+                           .select_related('credit'))
     for transaction in debit_transactions:
         balance_change[transaction.currency.short_name] += (
             transaction.value * account.sign_modifier) 
@@ -82,17 +87,17 @@ def account_balance_change(account, start_date=MIN_DATE,
         for currency in Currency.objects.all():
             for child in account.children.all():
                 balance_change[currency.short_name] += (
-                    account_balance_change(child,
+                    account_balance_change(user, child,
                                            start_date,
                                            end_date)[currency.short_name])
 
     return balance_change
 
-def all_accounts_balance_change(start_date=MIN_DATE,
-                                end_date=datetime.now()):
+def all_accounts_balance_change(user, start_date=MIN_DATE,
+                                end_date=timezone.now()):
     balance_changes = {}
     for account in Account.objects.all():
         balance_changes[account.id] = account_balance_change(
-            account, start_date, end_date)
+            user, account, start_date, end_date)
     return balance_changes
     

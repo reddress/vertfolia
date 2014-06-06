@@ -1,20 +1,31 @@
 {% load vertfolia_tags %}
 {% load key %}
 
+{% if is_root %}
 <ul class="treeview" id="tree">
+{% else %}
+<ul style="display: none;">
+{% endif %}
+
   {% for child in children %}
-    <li class="expandable">
-      <a id="account_balance_{{ child.id }}" href="?#">
-      {{ child.long_name }}
+    <li{% if child.children.count > 0 %} class="expandable"{% endif %}>
+      {% if child.children.count > 0 %}
+        <div class="hitarea expandable-hitarea"></div>
+      {% endif %}
+      
+	  <a id="account_balance_{{ child.id }}" href="?#">
+	  {{ child.long_name }}
+
       {% for moneyunit in account_balances|key:child.id %}
         {% if account_balances|key:child.id|key:moneyunit > 0 %}
-          {{ moneyunit }} {{ account_balances|key:child.id|key:moneyunit|floatformat:2 }}
+          {{ moneyunit }}
+          {{ account_balances|key:child.id|key:moneyunit|floatformat:2 }}
         {% endif %}
       {% endfor %}
-      </a>
-    </li>
+	  </a>
 	{% if child.children.count > 0 %}
-	  {% display_tree child account_balances %}
+	  {% display_tree child account_balances False %}
 	{% endif %}
+    </li>
   {% endfor %}
 </ul>
