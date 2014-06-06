@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # FIXME: get account balances must accept user as parameter
+# FIXME: add view for last 5 transactions added
 
 # Transactions prior to 10 years ago may be ignored
 # FIXME to fixed date like Jan. 1, 1900
