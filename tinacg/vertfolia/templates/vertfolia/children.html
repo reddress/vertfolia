@@ -14,7 +14,7 @@
 	  {% endif %}
 	  
 	  <a onclick="show_transactions({{ child.id }})">
-	  {{ child.long_name }}
+		[{{ child.id }}] {{ child.long_name }}
 		<span id="account_balance_{{ child.id }}">
 			{{ account_balances|key:child.id }} 
 		</span>

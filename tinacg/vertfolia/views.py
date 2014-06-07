@@ -7,8 +7,7 @@ from django.template import RequestContext
 from django.utils import timezone
 
 from .models import Account, Currency, Transaction
-# from .models import account_balance_change, all_accounts_balance_change
-from .models import leaf_to_root_balance_change, leaf_to_root_balance_change_JSON
+from .models import get_balance_changes
 
 def print_balance_change(balance_change):
     output_str = ""
@@ -17,13 +16,11 @@ def print_balance_change(balance_change):
             output_str += "%s %.2f " % (currency, balance_change[currency])
     return output_str
 
+# FIXME Login required, login page
 def index(request):
     top_account = Account.objects.get(parent=None, user=request.user)
-    
-    #    account_balances = all_accounts_balance_change(request.user,
-    #                                                   end_date=timezone.now())
-    account_balances = leaf_to_root_balance_change_JSON(request.user,
-                                                   end_date=timezone.now())
+    account_balances = get_balance_changes(request.user,
+                                           end_date=timezone.now())
     return render(request, 'vertfolia/index.html',
                   { 'top_account': top_account,
                     'account_balances': account_balances,
@@ -31,10 +28,6 @@ def index(request):
                     })
 
 def add_transaction(request):
-    # use request.user
-    #print("add a transaction")
-    #print(request.POST["description"])
-
     try:
         currency = Currency.objects.get(pk=1)
     
@@ -64,8 +57,8 @@ def add_transaction(request):
         #                                end_date=timezone.now()))
         #     credit_account = credit_account.parent
 
-        new_balances = leaf_to_root_balance_change_JSON(request.user,
-                                                        end_date=timezone.now())
+        new_balances = get_balance_changes(request.user,
+                                           end_date=timezone.now())
         if request.is_ajax():
             return HttpResponse(json.dumps(new_balances),
                                 mimetype="application/json")

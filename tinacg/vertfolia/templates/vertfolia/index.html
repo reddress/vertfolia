@@ -25,6 +25,7 @@
   </head>
 
 Welcome to VertFolia, {{ user.username }}!
+<br>
 {{ time }}
 
 <div id="account_tree">
@@ -32,14 +33,16 @@ Welcome to VertFolia, {{ user.username }}!
 </div>
 
 <!-- later: modal window for adding transactions and accounts -->
-
+<!-- add button for "Add expense" that shows expanded expense tree 
+ (for clicking -->
+ 
 <form id="add_transaction_form">
   <!-- action="{% url 'add_transaction' %}" method="get"> -->
   {% csrf_token %}
-  desc: <input name="description" value="default desc"><br>
-  value: <input name="value" value="10"><br>
-  debit acct: <input name="debit" value="7"><br>
-  credit acct: <input name="credit" value="6">
+  desc: <input name="description"><br>
+  value: <input name="value"><br>
+  debit acct num: <input name="debit" value="2"><br>
+  credit acct num: <input name="credit" value="6">
   <input type="submit">
 </form>
 

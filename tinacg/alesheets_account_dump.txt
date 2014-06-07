@@ -1,0 +1,49 @@
+Front wallet cash;WAL;1;Asset
+Itau Savings;ITpou;1;Asset
+Pontual salario;PTLsal;-1;Income
+Itau Conta Corrente;ITcor;1;Asset
+Groceries;GROC;1;Expense
+Bancas, livros, papelaria;BOOK;1;Expense
+Opening Balance;OPEN;-1;Equity
+Uncategorized Expenses;EXP;1;Expense
+Uncategorized Income;INC;-1;Income
+Back Wallet;WLbak;1;Asset
+Drawer;DRW;1;Asset
+Doctor and Medications;MED;1;Expense
+Bares, Restaurantes, Junk food;FOOD;1;Expense
+Sushi;FOODs;1;Expense
+Emergency Locations;EMR;1;Asset
+Electronics, multimedia;ELEC;1;Expense
+Household items, appliances;HOME;1;Expense
+Services;SVC;1;Expense
+Presentes;PRES;1;Expense
+Family;FAM;-1;Income
+Itau juros;ITjur;-1;Income
+Credit Card;CRED;-1;Liability
+Transportation;TR;1;Expense
+Self-care, haircuts;SELF;1;Expense
+Communications, phone, correios, internet;COMM;1;Expense
+CGD Tesouro Direto;CGDtes;1;Asset
+CGD Acoes;CGDac;1;Asset
+CGD Saldo Corrente;CGDcor;1;Asset
+Bradesco Tesouro Direto;BRtes;1;Asset
+Bradesco Conta Corrente;BRcor;1;Asset
+Bradesco Poupanca;BRpou;1;Asset
+Bank fees;BANK;1;Expense
+Diary entries;DIARY;-1;Equity
+The World;WORLD;-1;Equity
+Activities;ACT;-1;Equity
+Claro pre-pago;CLAR;1;Asset
+Cartao Fidelidade;BFID;1;Asset
+Bilhete Unico;BILH;1;Asset
+Programming;PROG;-1;Equity
+Discounts and rebates;DISC;-1;Equity
+Entertainment, shows;ENT;1;Expense
+Coins and Small bills envelope;COIN;1;Asset
+Clothing, accessories, textiles;CLTH;1;Expense
+CGD acoes juros dividendos;CGDin;-1;Income
+Declaracao Imposto;DECL;1;Asset
+Travel;TRAV;1;Expense
+Bradesco juros poupanca;BRjur;-1;Income
+Adjustments;ADJ;-1;Equity
+Running Shorts;SHORT;1;Asset

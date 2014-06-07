@@ -6,10 +6,9 @@ from django.utils import timezone
 
 # FIXME: add view for last 5 transactions added
 
-# Transactions prior to 10 years ago may be ignored
-# FIXME to fixed date like Jan. 1, 1900
-MIN_DATE = timezone.now() - timedelta(days=3650)
-MAX_DATE = timezone.now() + timedelta(days=3650)
+# Transactions prior to 1901 are ignored
+MIN_DATE = datetime(1901, 1, 1).replace(tzinfo=timezone.utc)
+MAX_DATE = timezone.now()
 
 class Currency(models.Model):
     class Meta:
@@ -57,7 +56,9 @@ class MoneyUnit:
         else:
             error_msg = "Adding amounts of different currencies is not supported."
             raise ValueError(error_msg)
-        
+
+# REMOVED: easy to understand but very slow
+#
 # def account_balance_change(user, account,
 #                            start_date=MIN_DATE, end_date=MAX_DATE):
 #     balance_change = {}
@@ -107,17 +108,24 @@ class MoneyUnit:
 #             print("found id " + account.id)
 #     return balance_changes
 
-def leaf_to_root_balance_change(user, start_date=MIN_DATE, end_date=MAX_DATE):
+def leaf_to_root_balance_changes(user, start_date=MIN_DATE, end_date=MAX_DATE):
     transactions = (Transaction.objects.select_related('debit', 'credit',
                                                        'currency', 'parent')
                     .filter(user=user,
                             date__gte=start_date, date__lte=end_date))
     balance_changes = {}
 
-    # initialize balance_changes
+    # cache parent ids
+    account_parent = {}
+    
+    # initialize balance_changes and parent id cache
     accounts = Account.objects.filter(user=user)
     for account in accounts:
         balance_changes[account.id] = {}
+        if account.parent:
+            account_parent[account.id] = account.parent.id
+        else:
+            account_parent[account.id] = None
         
     currencies = Currency.objects.all()
     for account in accounts:
@@ -125,28 +133,68 @@ def leaf_to_root_balance_change(user, start_date=MIN_DATE, end_date=MAX_DATE):
             balance_changes[account.id][currency.short_name] = 0
     
     for transaction in transactions:
-        debit = transaction.debit
-        while debit:
-            balance_changes[debit.id][transaction.currency.short_name] += transaction.value * transaction.debit.sign_modifier
-            debit = debit.parent
+        debit_id = transaction.debit.id
+        while account_parent[debit_id]:
+            balance_changes[debit_id][transaction.currency.short_name] += transaction.value * transaction.debit.sign_modifier
+            debit_id = account_parent[debit_id]
 
-        credit = transaction.credit
-        while credit:
-            balance_changes[credit.id][transaction.currency.short_name] -= transaction.value * transaction.credit.sign_modifier
-            credit = credit.parent
+        credit_id = transaction.credit.id
+        while account_parent[credit_id]:
+            balance_changes[credit_id][transaction.currency.short_name] -= transaction.value * transaction.credit.sign_modifier
+            credit_id = account_parent[credit_id]
 
     return balance_changes
 
-def leaf_to_root_balance_change_JSON(user, start_date=MIN_DATE, end_date=MAX_DATE):
-    balance_changes = leaf_to_root_balance_change(user, start_date, end_date)
+def get_balance_changes(user, start_date=MIN_DATE, end_date=MAX_DATE):
+    balance_changes = leaf_to_root_balance_changes(user, start_date, end_date)
 
-    balance_changes_JSON = {}
+    balance_changes_formatted = {}
 
     for account_id in balance_changes:
-        JSON_str = ""
+        formatted_str = ""
         for currency in balance_changes[account_id]:
             if balance_changes[account_id][currency] != 0:
-                JSON_str += "%s %.2f " % (currency, balance_changes[account_id][currency])
-        balance_changes_JSON[account_id] = JSON_str
+                formatted_str += "%s %.2f " % (currency, balance_changes[account_id][currency])
+        balance_changes_formatted[account_id] = formatted_str
 
-    return balance_changes_JSON
+    return balance_changes_formatted
+
+def add_account_from_string(user, account_data_string):
+    account_data = account_data_string.split(";")
+    new_account = Account(user=user, long_name=account_data[0],
+                          short_name=account_data[1],
+                          sign_modifier=int(account_data[2]),
+                          parent=Account.objects.get(user=user,
+                                                     short_name=account_data[3]))
+    new_account.save()
+
+def add_accounts_from_file(user, filename):
+    file = open(filename)
+    for line in file:
+        add_account_from_string(user, line.strip())
+    # in python manage.py shell
+    # from vertfolia.models import *
+    # from django.contrib.auth.models import User
+    # tina = User.objects.get(pk=1)
+    # add_accounts_from_file(tina, "alesheets_account_dump.txt")
+
+def add_transaction_from_string(user, transaction_data_string):
+    transaction_data = transaction_data_string.split(";")
+    transaction_date_fields = map(int, transaction_data[0].split("-"))
+    transaction_date = datetime(*transaction_date_fields)
+    new_transaction = Transaction(user=user,
+                                  description=transaction_data[4],
+                                  date=transaction_date,
+                                  value=transaction_data[1],
+                                  currency=Currency.objects.get(pk=1),
+                                  debit=Account.objects.get(user=user,
+                                            short_name=transaction_data[2]),
+                                  credit=Account.objects.get(user=user,
+                                            short_name=transaction_data[3]))
+    new_transaction.save()
+
+def add_transactions_from_file(user, filename):
+    file = open(filename)
+    for line in file:
+        add_transaction_from_string(user, line.strip())
+    # usage: see python shell comments above (for accounts)
