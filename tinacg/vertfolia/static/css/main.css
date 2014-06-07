@@ -1,0 +1,20 @@
+i {
+    color: red;
+}
+
+#account_tree {
+    position: fixed;
+    width: 350px;
+    left: 10px;
+    top: 10px;
+    bottom: 0;
+    overflow-y: auto;
+    overflow-x: auto;
+    background-color: alice blue;
+}
+
+#main_div {
+    position: relative;
+    left: 370px;
+    top: 10px;
+}

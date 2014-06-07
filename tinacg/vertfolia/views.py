@@ -21,18 +21,30 @@ def index(request):
     top_account = Account.objects.get(parent=None, user=request.user)
     account_balances = get_balance_changes(request.user,
                                            end_date=timezone.now())
+    account_short_names = '","'.join((map(lambda x: getattr(x, 'short_name'),
+                                Account.objects.filter(user=request.user)
+                                .order_by("short_name"))))
+    
     return render(request, 'vertfolia/index.html',
                   { 'top_account': top_account,
                     'account_balances': account_balances,
+                    'account_short_names': account_short_names,
                     'time': timezone.now(),
                     })
 
 def add_transaction(request):
     try:
         currency = Currency.objects.get(pk=1)
-    
-        debit_account = Account.objects.get(pk=int(request.POST["debit"]))
-        credit_account = Account.objects.get(pk=int(request.POST["credit"]))
+
+        # use account primary key (id)
+        # debit_account = Account.objects.get(pk=int(request.POST["debit"]))
+        # credit_account = Account.objects.get(pk=int(request.POST["credit"]))
+
+        # use short name
+        debit_account = Account.objects.get(user=request.user,
+                                short_name__iexact=request.POST["debit"])
+        credit_account = Account.objects.get(user=request.user,
+                                short_name__iexact=request.POST["credit"])
 
         new_transaction = Transaction(user=request.user,
                                   description=request.POST["description"],
@@ -67,4 +79,9 @@ def add_transaction(request):
     except Exception:
         print(Exception)
         print(traceback.format_exc())
-        return HttpResponse("An error has occurred while adding a transaction")
+        return HttpResponseServerError("An error has occurred while adding a transaction")
+
+def refresh_tree(request):
+    # print balances for given start and end dates
+    pass
+    

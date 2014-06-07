@@ -4,8 +4,14 @@
 <head>
 	<link rel="stylesheet" href="{% static "js/jquery.treeview.css" %}" />
 	<link rel="stylesheet" href="{% static "js/screen.css" %}"/>
+	<link rel="stylesheet" href="{% static "css/main.css" %}"/>
 	<script src="{% static "js/jquery-1.11.0.min.js" %}"></script>
 	<script src="{% static "js/jquery.treeview.js" %}"></script>
+
+	<!-- jquery UI -->
+	<link rel="stylesheet" href="{% static "js/jquery-ui-1.10.4.custom/css/flick/jquery-ui-1.10.4.custom.css" %}" />
+	<script src="{% static "js/jquery-ui-1.10.4.custom/js/jquery-ui-1.10.4.custom.js" %}"></script>
+	
 	<script type="text/javascript">
   $(function () {
 	$("#tree").treeview({
@@ -14,74 +20,120 @@
 	  prerendered: true,
 	  persist: "location"
 	});
+
+    // jquery ui
+
+    var account_short_names = [
+{% autoescape off %}
+     "{{ account_short_names }}"
+{% endautoescape %}
+    ];
+
+    $("#add_transaction_debit_name").autocomplete({
+      source: account_short_names
+    });
+    $("#add_transaction_credit_name").autocomplete({
+      source: account_short_names
+    });
+
   })
 
-  // Handle clicks on tree
-  function show_transactions(account_id) {
-	alert(account_id);
+// var selected_field = "none";
+
+
+// Handle clicks on tree
+function tree_account_click_handler(account_id) {
+  // alert(account_id);
+/*
+  if (selected_field == "add_transaction_debit") {
+	$("#add_transaction_debit_id").val(account_id);
+  } else if (selected_field == "add_transaction_credit") {
+	$("#add_transaction_credit_id").val(account_id);
   }
+  selected_field = "none";
+*/
+  
+}
 
 	</script>
   </head>
+  <body>
 
-Welcome to VertFolia, {{ user.username }}!
-<br>
-{{ time }}
-
-<div id="account_tree">
+  <div id="account_tree">
 {% include "vertfolia/tree.html" %}
 </div>
 
-<!-- later: modal window for adding transactions and accounts -->
-<!-- add button for "Add expense" that shows expanded expense tree 
- (for clicking -->
- 
+<div id="main_div">
+Welcome to VertFolia, {{ user.username }}!
+<br>
+{{ time }}
+<br><br>
+
+  <i>Place start/end dates here - on update, send Ajax request that refreshes both the tree and currently open transaction list</i>
+  <br><br>
+
+  <i>Tabbed: Add transactions | View transactions</i>
+  <br><br>
+  
 <form id="add_transaction_form">
+  <b>Add a transaction</b><hr>
   <!-- action="{% url 'add_transaction' %}" method="get"> -->
   {% csrf_token %}
-  desc: <input name="description"><br>
-  value: <input name="value"><br>
-  debit acct num: <input name="debit" value="2"><br>
-  credit acct num: <input name="credit" value="6">
-  <input type="submit">
-</form>
+  <i> DATE / TIME </i><br>
+  desc: <input type="text" name="description">
+  value: <input type="text" name="value" size="10"><br>
+  
+  debit acct: <input type="text" name="debit" size="4" id="add_transaction_debit_name">
+  credit acct: <input type="text" name="credit" size="4" id="add_transaction_credit_name">
 
+
+<!-- Click interface -->
+<!--  debit acct num: <input type="text" name="debit" size="4" id="add_transaction_debit_id" onclick="selected_field='add_transaction_debit'; this.value='<< click';">
+  credit acct num: <input type="text" name="credit" size="4" id="add_transaction_credit_id" onclick="selected_field='add_transaction_credit'; this.value='<< click';;">
+  -->
+
+
+  <input type="submit">
+  </form>
+
+</div> <!-- main div -->
+  </body>
+  
 <script>
   var request;
   $("#add_transaction_form").submit(function (event) {
-  if (request) {
-  request.abort();
-  }
+	if (request) {
+	  request.abort();
+	}
 
-  var form = $(this);
-  var inputs = form.find("hidden, input, select");
-  var serializedData = form.serialize();
+	var form = $(this);
+	var inputs = form.find("input");
+	var serializedData = form.serialize();
 
-  inputs.prop("disabled", true);
-  request = $.ajax({
-  url: "{% url 'add_transaction' %}",
-  type: "post",
-  data: serializedData
-  });
+	inputs.prop("disabled", true);
+	request = $.ajax({
+	  url: "{% url 'add_transaction' %}",
+	  type: "post",
+	  data: serializedData
+	});
 
-  request.success(function (response, textStatus, jqXHR) {
-	//	alert(response);
-  //	$('#account_tree').html(response);
-  $.each(response, function (key, val) {
-  //	alert(key + val);
-  $('#account_balance_'+key).html(val);
-  });
-  
-  });
+	request.done(function (response, textStatus, jqXHR) {
+	  $.each(response, function (key, val) {
+		// update tree balances
+		$('#account_balance_'+key).html(val);
+	  });
+	});
 
-  request.fail(function (jqXHR, textStatus, errorThrown) {
-  alert("ADD TRANSACTION error: " + errorThrown);
-  });
+	request.fail(function (jqXHR, textStatus, errorThrown) {
+	  alert("ADD TRANSACTION error: " + errorThrown);
+	});
 
-  request.always(function () {
-  inputs.prop("disabled", false);
-  });
+	request.always(function () {
+	  inputs.prop("disabled", false);
+	  $("#add_transaction_form").find("input[type=text]").val("");
+	});
 
-  event.preventDefault();
+	event.preventDefault();
   });
 </script>
+
