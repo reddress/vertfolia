@@ -17,6 +17,14 @@ i {
     position: fixed;
     left: 370px;
     top: 10px;
+    bottom: 0;
+    right: 0;
     overflow-x: auto;
     overflow-y: auto;
+}
+
+.transactions_list {
+    font-family: ProggyTinyTTSZ, Lucida Console;
+    font-size: 12pt;
+    line-height: 12pt;
 }

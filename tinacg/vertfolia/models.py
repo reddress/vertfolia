@@ -46,8 +46,11 @@ class Transaction(models.Model):
                                         self.date.hour, self.date.minute,
                                         self.date.second, 0, utc))
 
-        fmt_string = "%s %s %.2f %s / %s - %s"
-        return fmt_string % (local_time.strftime("%d/%m/%Y %H:%M"),
+        # date_format = "%a %d/%m/%y %H:%M"
+        date_format = "%a %d/%m"
+        fmt_string = "%s %s %.2f %s/%s %s"
+        
+        return fmt_string % (local_time.strftime(date_format),
                              self.currency.short_name,
                              self.value,
                              self.debit, self.credit, self.description[:80],)

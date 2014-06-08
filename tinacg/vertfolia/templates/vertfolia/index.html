@@ -88,9 +88,9 @@ function tree_account_click_handler(account_short_name) {
   <i><a id="same_day_autofill" href="?#">Same day</a></i></br>
   
   <br>  
-  Start date: <input type="text" id="start_date" name="start_date_formatted" value="{{ earliest_date|date:"j/n/Y" }}">
+  Start date: <input type="text" id="start_date" name="start_date_formatted" value="{{ earliest_date|date:"j/n/Y" }}" size="8">
   
-  End date: <input type="text" id="end_date" name="end_date_formatted" value="{{ time|date:"j/n/Y" }}">
+  End date: <input type="text" id="end_date" name="end_date_formatted" value="{{ time|date:"j/n/Y" }}" size="8">
 
 </form>
   
@@ -112,7 +112,7 @@ function tree_account_click_handler(account_short_name) {
 
         <br>
         
-        desc: <input type="text" name="description" size="60"><br>
+        desc: <input type="text" name="description" size="40"><br>
         value: <input type="text" name="value" size="10"><br>
   
         debit acct: <input type="text" name="debit" size="9" id="add_transaction_debit_name">
@@ -127,11 +127,8 @@ function tree_account_click_handler(account_short_name) {
 
         <input type="submit">
       </form>
-      <div id="latest_transactions">
-        {% for transaction in latest_transactions %}
-          {{ transaction }}<br>
-        {% endfor %}
-      </div>
+      <pre class="transactions_list"><div id="latest_transactions">{% for transaction in latest_transactions %}{{ transaction }}
+{% endfor %}</div></pre>
       
       <form id="latest_transactions_form">
         {% csrf_token %}
@@ -144,12 +141,11 @@ function tree_account_click_handler(account_short_name) {
 
       <form id="view_transactions_form">
         {% csrf_token %}
-        Account short name: <input type="text" name="active_account" id="active_account" size="8" value="{{ user.username }}">
+        Account short name: <input type="text" name="active_account" id="active_account" size="8" value="{{ user.username }}" onclick="this.value=''">
         <input type="submit">
       </form>
 
-      <div id="transactions">
-      </div>
+      <pre class="transactions_list"><div id="transactions"></div></pre>
     </div>
 
 
