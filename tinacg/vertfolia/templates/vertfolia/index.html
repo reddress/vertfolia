@@ -24,9 +24,10 @@
 
 	// jquery ui
 
-    $("#start_date").datepicker({ dateFormat: "d/m/yy", defaultDate: +8 });
+    $("#start_date").datepicker({ dateFormat: "d/m/yy" });
     $("#end_date").datepicker({ dateFormat: "d/m/yy" });
-    
+
+    $("#add_transaction_day").datepicker({ dateFormat: "d/m/yy" });
 
     $("#tabs").tabs();
     
@@ -37,13 +38,16 @@
 	];
 
 	$("#add_transaction_debit_name").autocomplete({
-	  source: account_short_names
+	  source: account_short_names,
+      delay: 5
 	});
 	$("#add_transaction_credit_name").autocomplete({
-	  source: account_short_names
+	  source: account_short_names,
+      delay: 5
 	});
 	$("#active_account").autocomplete({
-	  source: account_short_names
+	  source: account_short_names,
+      delay: 5
 	});
 
   })
@@ -67,11 +71,11 @@ function tree_account_click_handler(account_short_name) {
 <!-- MAIN DIV -->
 <div id="main_div">
   Welcome to VertFolia, {{ user.username }}!
-  <i>LOGIN / LOGOUT</i>
-<br>
-  {{ time|date:"j/n/Y G:i" }} (UTC {{ time.hour }}:{{ time.minute }})
-<br>
-<br><br>
+  <i>LOGIN / LOGOUT</i> [ <a href="/admin/" target="vertfolia_admin">admin</a> ]
+
+<!--{{ time|date:"j/n/Y G:i" }} (UTC {{ time.hour }}:{{ time.minute }}) -->
+
+<hr>
 
 <!-- TIME WINDOW -->
 <form id="time_window_form">
@@ -81,9 +85,9 @@ function tree_account_click_handler(account_short_name) {
   <i><a id="last_year_autofill" href="?#">365 days back</a></i> |
   <i><a id="last_month_autofill" href="?#">30 days back</a></i> |
   <i><a id="last_week_autofill" href="?#">Last week</a></i> |
-  <i><a id="today_autofill" href="?#">Today</a></i></br>
+  <i><a id="same_day_autofill" href="?#">Same day</a></i></br>
   
-  
+  <br>  
   Start date: <input type="text" id="start_date" name="start_date_formatted" value="{{ earliest_date|date:"j/n/Y" }}">
   
   End date: <input type="text" id="end_date" name="end_date_formatted" value="{{ time|date:"j/n/Y" }}">
@@ -93,44 +97,60 @@ function tree_account_click_handler(account_short_name) {
 
   <!-- TABS -->
   <div id="tabs">
-  <ul>
-  <li><a href="#tabs_add_transaction"><b>Add transaction</b></a></li>
-  <li><a href="#tabs_view_transactions" id="view_transactions_tab_link"><b>View transactions</b></a></li>
+    <ul>
+    <li><a href="#tabs_add_transaction"><b>Add transaction</b></a></li>
+    <li><a href="#tabs_view_transactions" id="view_transactions_tab_link"><b>View transactions</b></a></li>
 
-  <div id="tabs_add_transaction">
-  <br><br>
-  <form id="add_transaction_form">
-  <!-- action="{% url 'add_transaction' %}" method="get"> -->
-  {% csrf_token %}
-  <i> DATE / TIME </i><br>
-  desc: <input type="text" name="description">
-  value: <input type="text" name="value" size="10"><br>
+    <div id="tabs_add_transaction">
+      <br><br>
+      <form id="add_transaction_form">
+        <!-- action="{% url 'add_transaction' %}" method="get"> -->
+        {% csrf_token %}
+
+        Date: <input id="add_transaction_day" name="day" size="10" value="{{ time|date:"j/n/Y" }}">
+        Time: <input id="add_transaction_time" name="time" size="10" value="{{ time|date:"H:i" }}">
+
+        <br>
+        
+        desc: <input type="text" name="description" size="60"><br>
+        value: <input type="text" name="value" size="10"><br>
   
-  debit acct: <input type="text" name="debit" size="9" id="add_transaction_debit_name">
-  credit acct: <input type="text" name="credit" size="9" id="add_transaction_credit_name">
+        debit acct: <input type="text" name="debit" size="9" id="add_transaction_debit_name">
+        credit acct: <input type="text" name="credit" size="9" id="add_transaction_credit_name">
 
-  <br>
+        <br>
   
   <!-- Click interface -->
 <!--  debit acct num: <input type="text" name="debit" size="4" id="add_transaction_debit_id" onclick="selected_field='add_transaction_debit'; this.value='<< click';">
   credit acct num: <input type="text" name="credit" size="4" id="add_transaction_credit_id" onclick="selected_field='add_transaction_credit'; this.value='<< click';;">
   -->
 
-  <input type="submit">
-  </form>
-</div> <!-- close add_transaction -->
+        <input type="submit">
+      </form>
+      <div id="latest_transactions">
+        {% for transaction in latest_transactions %}
+          {{ transaction }}<br>
+        {% endfor %}
+      </div>
+      
+      <form id="latest_transactions_form">
+        {% csrf_token %}
+      </form>
+      
+    </div> <!-- close add_transaction -->
 
-  <div id="tabs_view_transactions">
-  <br><br>
+    <div id="tabs_view_transactions">
+      <br><br>
 
-  <form id="view_transactions_form">
-  {% csrf_token %}
-  <input type="text" name="active_account" id="active_account">
-  <input type="submit">
-  </form>
-  <div id="transactions">
-  </div>
-  </div>
+      <form id="view_transactions_form">
+        {% csrf_token %}
+        Account short name: <input type="text" name="active_account" id="active_account" size="8" value="{{ user.username }}">
+        <input type="submit">
+      </form>
+
+      <div id="transactions">
+      </div>
+    </div>
 
 
   </div> <!-- CLOSE TABS -->
@@ -142,6 +162,44 @@ function tree_account_click_handler(account_short_name) {
   </body>
   
 <script>
+
+function days_back(delta_days) {
+  var end_date_string = $("#end_date").val();
+  var end_date_components = end_date_string.split("/");
+
+  var today = new Date(end_date_components[2], end_date_components[1] - 1,
+                       end_date_components[0]);
+  var today_in_millis = today.valueOf();
+  var millis_difference = delta_days * 24 * 60 * 60 * 1000;
+  var previous_date = new Date(today_in_millis - millis_difference);
+    
+  return previous_date.getUTCDate() + "/" + (previous_date.getUTCMonth() + 1) + "/" + previous_date.getUTCFullYear();
+}
+
+function add_autofill_handler(id, date_replacement) {
+  if (typeof date_replacement === "number") {
+    date_replacement = days_back(date_replacement);
+  }
+  
+  $(id).click(function (event) {
+    $("#start_date").val(date_replacement);
+    update_views();
+    event.preventDefault();
+  });
+}
+
+add_autofill_handler("#earliest_date_autofill", "{{ earliest_date|date:"j/n/Y" }}");
+add_autofill_handler("#last_year_autofill", 365);
+add_autofill_handler("#last_month_autofill", 30);
+add_autofill_handler("#last_week_autofill", 7);
+add_autofill_handler("#same_day_autofill", 0);
+
+/////////////////
+// AJAX
+/////////////////
+
+
+// Add transaction > update tree > update view transactions > update latest
 
 var request;
 
@@ -176,7 +234,6 @@ function update_views() {
 
   request.always(function () {
     //    alert("always update tree");
-    
   });
   
 }
@@ -208,6 +265,7 @@ $("#end_date").change(function (event) {
 
 	request.done(function (response, textStatus, jqXHR) {
       update_views();
+      //      $("#latest_transactions_form").submit();
 	});
 
 	request.fail(function (jqXHR, textStatus, errorThrown) {
@@ -241,6 +299,7 @@ $("#view_transactions_form").submit(function (event) {
 
   request.done(function (response, textStatus, jqXHR) {
     $("#transactions").html(response);
+    $("#latest_transactions_form").submit();
   });
 
   request.fail(function (jqXHR, textStatus, errorThrown) {
@@ -254,28 +313,33 @@ $("#view_transactions_form").submit(function (event) {
   event.preventDefault();  
 });
 
-function add_autofill_handler(id, date_string) {
-$(id).click(function (event) {
-  $("#start_date").val(date_string);
-  update_views();
-  event.preventDefault();
+$("#latest_transactions_form").submit(function (event) {
+  if (request) {
+    request.abort();
+  }
+
+  var form=$(this);
+  var serializedData = form.serialize();
+  
+  request = $.ajax({
+    url: "{% url 'view_latest_transactions' %}",
+    type: "POST",
+    data: serializedData
   });
-}
 
-function days_back(delta_days) {
-  var today = new Date({{ time|date:"Y" }}, {{ time|date:"n"}} - 1,
-    {{ time|date:"j" }});
-  var today_in_millis = today.valueOf();
-  var millis_difference = delta_days * 24 * 60 * 60 * 1000;
-  var previous_date = new Date(today_in_millis - millis_difference);
-    
-  return previous_date.getUTCDate() + "/" + (previous_date.getUTCMonth() + 1) + "/" + previous_date.getUTCFullYear();
-}
+  request.done(function (response, textStatus, jqXHR) {
+    $("#latest_transactions").html(response);
+  });
 
-add_autofill_handler("#earliest_date_autofill", "{{ earliest_date|date:"j/n/Y" }}");
-add_autofill_handler("#last_year_autofill", days_back(365));
-add_autofill_handler("#last_month_autofill", days_back(30));
-add_autofill_handler("#last_week_autofill", days_back(7));
-add_autofill_handler("#today_autofill", "{{ time|date:"j/n/Y" }}");
+  request.fail(function (jqXHR, textStatus, errorThrown) {
+	alert("VIEW LATEST TRANSACTIONS error: " + errorThrown);
+  });
+
+  request.always(function () {
+
+  });
+
+  event.preventDefault();
+});
 
 </script>

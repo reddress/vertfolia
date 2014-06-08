@@ -10,4 +10,7 @@ urlpatterns = patterns('',
                            name='update_tree'),
                        url(r'^view_transactions/$', views.view_transactions,
                            name='view_transactions'),
+                       url(r'^view_latest_transactions/$',
+                           views.view_latest_transactions,
+                           name='view_latest_transactions'),
                        )
