@@ -21,20 +21,29 @@
 	  persist: "location"
 	});
 
-    // jquery ui
+	// jquery ui
 
-    var account_short_names = [
+    $("#start_date").datepicker({ dateFormat: "d/m/yy", defaultDate: +8 });
+    $("#end_date").datepicker({ dateFormat: "d/m/yy" });
+    
+
+    $("#tabs").tabs();
+    
+	var account_short_names = [
 {% autoescape off %}
-     "{{ account_short_names }}"
+	 "{{ account_short_names }}"
 {% endautoescape %}
-    ];
+	];
 
-    $("#add_transaction_debit_name").autocomplete({
-      source: account_short_names
-    });
-    $("#add_transaction_credit_name").autocomplete({
-      source: account_short_names
-    });
+	$("#add_transaction_debit_name").autocomplete({
+	  source: account_short_names
+	});
+	$("#add_transaction_credit_name").autocomplete({
+	  source: account_short_names
+	});
+	$("#active_account").autocomplete({
+	  source: account_short_names
+	});
 
   })
 
@@ -42,17 +51,10 @@
 
 
 // Handle clicks on tree
-function tree_account_click_handler(account_id) {
-  // alert(account_id);
-/*
-  if (selected_field == "add_transaction_debit") {
-	$("#add_transaction_debit_id").val(account_id);
-  } else if (selected_field == "add_transaction_credit") {
-	$("#add_transaction_credit_id").val(account_id);
-  }
-  selected_field = "none";
-*/
-  
+function tree_account_click_handler(account_short_name) {
+  $("#active_account").val(account_short_name);
+  $("#view_transactions_form").submit();
+  $("#view_transactions_tab_link").click();
 }
 
 	</script>
@@ -66,41 +68,119 @@ function tree_account_click_handler(account_id) {
 <div id="main_div">
 Welcome to VertFolia, {{ user.username }}!
 <br>
-{{ time }}
+{{ time|date:"j/n/Y G:i" }}
+<br>
 <br><br>
 
-  <i>Place start/end dates here - on update, send Ajax request that refreshes both the tree and currently open transaction list</i>
+<!--
+<i>Place start/end dates here - on update, send Ajax request that refreshes both the tree and currently open transaction list</i>
   <br><br>
+  -->
 
-  <i>Tabbed: Add transactions | View transactions</i>
-  <br><br>
+<form id="time_window_form">
+  {% csrf_token %}
+  Start date: <input type="text" id="start_date" name="start_date_formatted" value="{{ earliest_date|date:"j/n/Y" }}">
+  End date: <input type="text" id="end_date" name="end_date_formatted" value="{{ time|date:"j/n/Y" }}">
+
+</form>
   
-<form id="add_transaction_form">
-  <b>Add a transaction</b><hr>
+
+  <!-- TABS -->
+  <div id="tabs">
+  <ul>
+  <li><a href="#tabs_add_transaction">Add transaction</a></li>
+  <li><a href="#tabs_view_transactions" id="view_transactions_tab_link">View transactions</a></li>
+
+  <div id="tabs_add_transaction">
+  <br><br>
+  <form id="add_transaction_form">
   <!-- action="{% url 'add_transaction' %}" method="get"> -->
   {% csrf_token %}
   <i> DATE / TIME </i><br>
   desc: <input type="text" name="description">
   value: <input type="text" name="value" size="10"><br>
   
-  debit acct: <input type="text" name="debit" size="4" id="add_transaction_debit_name">
-  credit acct: <input type="text" name="credit" size="4" id="add_transaction_credit_name">
+  debit acct: <input type="text" name="debit" size="9" id="add_transaction_debit_name">
+  credit acct: <input type="text" name="credit" size="9" id="add_transaction_credit_name">
 
-
-<!-- Click interface -->
+<br>
+  <!-- Click interface -->
 <!--  debit acct num: <input type="text" name="debit" size="4" id="add_transaction_debit_id" onclick="selected_field='add_transaction_debit'; this.value='<< click';">
   credit acct num: <input type="text" name="credit" size="4" id="add_transaction_credit_id" onclick="selected_field='add_transaction_credit'; this.value='<< click';;">
   -->
 
-
   <input type="submit">
   </form>
+</div> <!-- close add_transaction -->
+
+  <div id="tabs_view_transactions">
+  <br><br>
+  <form id="view_transactions_form">
+  {% csrf_token %}
+  <input type="text" name="active_account" id="active_account">
+  <input type="submit">
+  </form>
+  <div id="transactions">
+  </div>
+  </div>
+
+
+  </div> <!-- CLOSE TABS -->
+  
+  <br><br>
+  
 
 </div> <!-- main div -->
   </body>
   
 <script>
-  var request;
+
+var request;
+
+function update_tree() {
+  var form = $("#time_window_form");
+  var serializedData = form.serialize();
+
+  if (request) {
+    request.abort();
+  }
+  
+  request = $.ajax({
+    url: "{% url 'update_tree' %}",
+    type: "POST",
+    data: serializedData
+  });
+
+  request.done(function (response, textStatus, jqXHR) {
+//    alert("done updating tree");
+	  $.each(response, function (key, val) {
+		// update tree balances
+		$('#account_balance_'+key).html(val);
+	  });
+      if ($("#active_account").val() != "") {
+        $("#view_transactions_form").submit();
+      }
+  });
+  request.fail(function (jqXHR, textStatus, errorThrown) {
+	alert("update tree error: " + errorThrown);
+  });
+
+  request.always(function () {
+    //    alert("always update tree");
+    
+  });
+  
+}
+
+// on date change
+$("#start_date").change(function (event) {
+  update_tree();
+});
+$("#end_date").change(function (event) {
+  update_tree();
+});
+
+  
   $("#add_transaction_form").submit(function (event) {
 	if (request) {
 	  request.abort();
@@ -113,15 +193,12 @@ Welcome to VertFolia, {{ user.username }}!
 	inputs.prop("disabled", true);
 	request = $.ajax({
 	  url: "{% url 'add_transaction' %}",
-	  type: "post",
+	  type: "POST",
 	  data: serializedData
 	});
 
 	request.done(function (response, textStatus, jqXHR) {
-	  $.each(response, function (key, val) {
-		// update tree balances
-		$('#account_balance_'+key).html(val);
-	  });
+      update_tree();
 	});
 
 	request.fail(function (jqXHR, textStatus, errorThrown) {
@@ -135,5 +212,37 @@ Welcome to VertFolia, {{ user.username }}!
 
 	event.preventDefault();
   });
+
+$("#view_transactions_form").submit(function (event) {
+  if (request) {
+    request.abort();
+  }
+  var form = $(this);
+  var serializedData = form.serialize();
+
+  // add date info from time_window / = %2F
+  serializedData += "&start_date_formatted=" + $("#start_date").val().replace(/\//g, "%2F");
+  serializedData += "&end_date_formatted=" + $("#end_date").val().replace(/\//g, "%2F");
+  
+  request = $.ajax({
+    url: "{% url 'view_transactions' %}",
+    type: "POST",
+    data: serializedData
+  });
+
+  request.done(function (response, textStatus, jqXHR) {
+    $("#transactions").html(response);
+  });
+
+  request.fail(function (jqXHR, textStatus, errorThrown) {
+	alert("VIEW TRANSACTIONS error: " + errorThrown);
+  });
+
+  request.always(function () {
+
+  });
+
+  event.preventDefault();  
+});
 </script>
 

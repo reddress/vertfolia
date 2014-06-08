@@ -13,7 +13,7 @@
 		<div class="hitarea expandable-hitarea"></div>
 	  {% endif %}
 	  
-	  <a onclick="tree_account_click_handler({{ child.id }});" title="{{ child.short_name }}">
+	  <a onclick="tree_account_click_handler('{{ child.short_name }}');" title="{{ child.short_name }}">
 		<!-- [{{ child.id }}] -->
 		{{ child.long_name }}
 		<span id="account_balance_{{ child.id }}">

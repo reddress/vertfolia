@@ -40,8 +40,8 @@ class Transaction(models.Model):
     credit = models.ForeignKey(Account, related_name="+")
     
     def __str__(self):
-        fmt_string = "%s/%s/%s: %.2f %s / %s - %s"
-        return fmt_string % (self.date.day, self.date.month, self.date.year,
+        fmt_string = "%s: %.2f %s / %s - %s"
+        return fmt_string % (self.date.strftime("%d/%m/%Y %H:%M"),
                              self.value,
                              self.debit, self.credit, self.description[:80],)
 

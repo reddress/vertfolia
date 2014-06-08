@@ -8,13 +8,15 @@ i {
     left: 10px;
     top: 10px;
     bottom: 0;
-    overflow-y: auto;
     overflow-x: auto;
+    overflow-y: auto;
     background-color: alice blue;
 }
 
 #main_div {
-    position: relative;
+    position: fixed;
     left: 370px;
     top: 10px;
+    overflow-x: auto;
+    overflow-y: auto;
 }
