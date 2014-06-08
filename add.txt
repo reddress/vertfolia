@@ -1,3 +1,0 @@
-add side div that displays transactions for selected account
-
-add link to display newest ten transactions
