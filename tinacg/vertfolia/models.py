@@ -5,8 +5,6 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.utils.timezone import utc, localtime
 
-# FIXME: add view for last 5 transactions added
-
 # Transactions prior to 1901 are ignored
 MIN_DATE = datetime(1901, 1, 1).replace(tzinfo=timezone.utc)
 MAX_DATE = timezone.now()

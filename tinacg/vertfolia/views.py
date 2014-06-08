@@ -20,7 +20,7 @@ def print_balance_change(balance_change):
             output_str += "%s %.2f " % (currency, balance_change[currency])
     return output_str
 
-# FIXME Login required, login page, update urls.py
+# FIXME add a login page, update urls.py
 @login_required
 def index(request):
     top_account = Account.objects.get(parent=None, user=request.user)
