@@ -88,9 +88,9 @@ function tree_account_click_handler(account_short_name) {
   <i><a id="same_day_autofill" href="?#">Same day</a></i></br>
   
   <br>	
-  Start date: <input type="text" id="start_date" name="start_date_formatted" value="{{ earliest_date|date:"j/n/Y" }}" size="8">
+  Start: <input type="text" id="start_date" name="start_date_formatted" value="{{ earliest_date|date:"j/n/Y" }}" size="8">
   
-  End date: <input type="text" id="end_date" name="end_date_formatted" value="{{ time|date:"j/n/Y" }}" size="8">
+  End: <input type="text" id="end_date" name="end_date_formatted" value="{{ time|date:"j/n/Y" }}" size="8"> <a onclick="$('#end_date').val('{{ time|date:"j/n/Y" }}'); update_views();">(end=today)</a>
 
 </form>
   
@@ -160,10 +160,6 @@ function tree_account_click_handler(account_short_name) {
 <script>
 
 function days_back(delta_days) {
-  if (typeof delta_days !== "number") {
-    return delta_days;
-  }
-    
   var end_date_string = $("#end_date").val();
   var end_date_components = end_date_string.split("/");
 
@@ -176,15 +172,22 @@ function days_back(delta_days) {
   return previous_date.getUTCDate() + "/" + (previous_date.getUTCMonth() + 1) + "/" + previous_date.getUTCFullYear();
 }
 
-function add_autofill_handler(id, date_replacement) {
+function add_autofill_handler(id, days) {
   $(id).click(function (event) {
-	$("#start_date").val(days_back(date_replacement));
+	$("#start_date").val(days_back(days));
 	update_views();
 	event.preventDefault();
   });
 }
 
-add_autofill_handler("#earliest_date_autofill", "{{ earliest_date|date:"j/n/Y" }}");
+// RESET TIME WINDOW
+$("#earliest_date_autofill").click(function (event) {
+  $("#start_date").val("{{ earliest_date|date:"j/n/Y" }}");
+  $("#end_date").val("{{ time|date:"j/n/Y" }}");
+  update_views();
+  event.preventDefault();
+});
+
 add_autofill_handler("#last_year_autofill", 365);
 add_autofill_handler("#last_month_autofill", 30);
 add_autofill_handler("#last_week_autofill", 7);
