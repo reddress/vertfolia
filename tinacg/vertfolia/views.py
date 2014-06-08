@@ -92,6 +92,8 @@ def unpack_date(formatted_date, get_end_of_day):
 
     # FIXME: until transaction saving and retrieval is uniform, hack timezone
     # differences
+
+    # return local time
     date = date + timedelta(hours=3)
     return date
         

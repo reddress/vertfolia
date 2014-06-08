@@ -10,6 +10,7 @@
 
 	<!-- jquery UI -->
 	<link rel="stylesheet" href="{% static "js/jquery-ui-1.10.4.custom/css/flick/jquery-ui-1.10.4.custom.css" %}" />
+    
 	<script src="{% static "js/jquery-ui-1.10.4.custom/js/jquery-ui-1.10.4.custom.js" %}"></script>
 	
 	<script type="text/javascript">
@@ -47,9 +48,6 @@
 
   })
 
-// var selected_field = "none";
-
-
 // Handle clicks on tree
 function tree_account_click_handler(account_short_name) {
   $("#active_account").val(account_short_name);
@@ -61,25 +59,33 @@ function tree_account_click_handler(account_short_name) {
   </head>
   <body>
 
-  <div id="account_tree">
-{% include "vertfolia/tree.html" %}
+<!-- ACCOUNT TREE -->
+<div id="account_tree">
+  {% include "vertfolia/tree.html" %}
 </div>
 
+<!-- MAIN DIV -->
 <div id="main_div">
-Welcome to VertFolia, {{ user.username }}!
+  Welcome to VertFolia, {{ user.username }}!
+  <i>LOGIN / LOGOUT</i>
 <br>
-{{ time|date:"j/n/Y G:i" }}
+  {{ time|date:"j/n/Y G:i" }} (UTC {{ time.hour }}:{{ time.minute }})
 <br>
 <br><br>
 
-<!--
-<i>Place start/end dates here - on update, send Ajax request that refreshes both the tree and currently open transaction list</i>
-  <br><br>
-  -->
-
+<!-- TIME WINDOW -->
 <form id="time_window_form">
   {% csrf_token %}
+  
+  <i><a id="earliest_date_autofill" href="?#">All dates</a></i> |
+  <i><a id="last_year_autofill" href="?#">365 days back</a></i> |
+  <i><a id="last_month_autofill" href="?#">30 days back</a></i> |
+  <i><a id="last_week_autofill" href="?#">Last week</a></i> |
+  <i><a id="today_autofill" href="?#">Today</a></i></br>
+  
+  
   Start date: <input type="text" id="start_date" name="start_date_formatted" value="{{ earliest_date|date:"j/n/Y" }}">
+  
   End date: <input type="text" id="end_date" name="end_date_formatted" value="{{ time|date:"j/n/Y" }}">
 
 </form>
@@ -88,8 +94,8 @@ Welcome to VertFolia, {{ user.username }}!
   <!-- TABS -->
   <div id="tabs">
   <ul>
-  <li><a href="#tabs_add_transaction">Add transaction</a></li>
-  <li><a href="#tabs_view_transactions" id="view_transactions_tab_link">View transactions</a></li>
+  <li><a href="#tabs_add_transaction"><b>Add transaction</b></a></li>
+  <li><a href="#tabs_view_transactions" id="view_transactions_tab_link"><b>View transactions</b></a></li>
 
   <div id="tabs_add_transaction">
   <br><br>
@@ -103,7 +109,8 @@ Welcome to VertFolia, {{ user.username }}!
   debit acct: <input type="text" name="debit" size="9" id="add_transaction_debit_name">
   credit acct: <input type="text" name="credit" size="9" id="add_transaction_credit_name">
 
-<br>
+  <br>
+  
   <!-- Click interface -->
 <!--  debit acct num: <input type="text" name="debit" size="4" id="add_transaction_debit_id" onclick="selected_field='add_transaction_debit'; this.value='<< click';">
   credit acct num: <input type="text" name="credit" size="4" id="add_transaction_credit_id" onclick="selected_field='add_transaction_credit'; this.value='<< click';;">
@@ -115,6 +122,7 @@ Welcome to VertFolia, {{ user.username }}!
 
   <div id="tabs_view_transactions">
   <br><br>
+
   <form id="view_transactions_form">
   {% csrf_token %}
   <input type="text" name="active_account" id="active_account">
@@ -137,7 +145,7 @@ Welcome to VertFolia, {{ user.username }}!
 
 var request;
 
-function update_tree() {
+function update_views() {
   var form = $("#time_window_form");
   var serializedData = form.serialize();
 
@@ -152,11 +160,12 @@ function update_tree() {
   });
 
   request.done(function (response, textStatus, jqXHR) {
-//    alert("done updating tree");
 	  $.each(response, function (key, val) {
 		// update tree balances
 		$('#account_balance_'+key).html(val);
 	  });
+      
+      // update "View transactions" tab
       if ($("#active_account").val() != "") {
         $("#view_transactions_form").submit();
       }
@@ -174,10 +183,10 @@ function update_tree() {
 
 // on date change
 $("#start_date").change(function (event) {
-  update_tree();
+  update_views();
 });
 $("#end_date").change(function (event) {
-  update_tree();
+  update_views();
 });
 
   
@@ -198,7 +207,7 @@ $("#end_date").change(function (event) {
 	});
 
 	request.done(function (response, textStatus, jqXHR) {
-      update_tree();
+      update_views();
 	});
 
 	request.fail(function (jqXHR, textStatus, errorThrown) {
@@ -244,5 +253,29 @@ $("#view_transactions_form").submit(function (event) {
 
   event.preventDefault();  
 });
-</script>
 
+function add_autofill_handler(id, date_string) {
+$(id).click(function (event) {
+  $("#start_date").val(date_string);
+  update_views();
+  event.preventDefault();
+  });
+}
+
+function days_back(delta_days) {
+  var today = new Date({{ time|date:"Y" }}, {{ time|date:"n"}} - 1,
+    {{ time|date:"j" }});
+  var today_in_millis = today.valueOf();
+  var millis_difference = delta_days * 24 * 60 * 60 * 1000;
+  var previous_date = new Date(today_in_millis - millis_difference);
+    
+  return previous_date.getUTCDate() + "/" + (previous_date.getUTCMonth() + 1) + "/" + previous_date.getUTCFullYear();
+}
+
+add_autofill_handler("#earliest_date_autofill", "{{ earliest_date|date:"j/n/Y" }}");
+add_autofill_handler("#last_year_autofill", days_back(365));
+add_autofill_handler("#last_month_autofill", days_back(30));
+add_autofill_handler("#last_week_autofill", days_back(7));
+add_autofill_handler("#today_autofill", "{{ time|date:"j/n/Y" }}");
+
+</script>

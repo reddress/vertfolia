@@ -396,7 +396,7 @@
 	border: 1px solid #dddddd;
 	background: #dddddd url("images/ui-bg_highlight-soft_50_dddddd_1x100.png") 50% 50% repeat-x;
 	color: #444444;
-	font-weight: bold;
+	/* font-weight: bold; */
 }
 .ui-widget-header a {
 	color: #444444;
@@ -409,7 +409,7 @@
 .ui-widget-header .ui-state-default {
 	border: 1px solid #dddddd;
 	background: #f6f6f6 url("images/ui-bg_highlight-soft_100_f6f6f6_1x100.png") 50% 50% repeat-x;
-	font-weight: bold;
+	/* font-weight: bold; */
 	color: #999999;
 }
 .ui-state-default a,
@@ -426,7 +426,7 @@
 .ui-widget-header .ui-state-focus {
 	border: 1px solid #0073ea;
 	background: #0073ea url("images/ui-bg_highlight-soft_25_0073ea_1x100.png") 50% 50% repeat-x;
-	font-weight: bold;
+	/* font-weight: bold; */
 	color: #ffffff;
 }
 .ui-state-hover a,
@@ -445,7 +445,7 @@
 .ui-widget-header .ui-state-active {
 	border: 1px solid #dddddd;
 	background: #ffffff url("images/ui-bg_glass_65_ffffff_1x400.png") 50% 50% repeat-x;
-	font-weight: bold;
+	/* font-weight: bold; */
 	color: #0055ff;
 }
 .ui-state-active a,
@@ -489,7 +489,7 @@
 .ui-priority-primary,
 .ui-widget-content .ui-priority-primary,
 .ui-widget-header .ui-priority-primary {
-	font-weight: bold;
+	/* font-weight: bold; */
 }
 .ui-priority-secondary,
 .ui-widget-content .ui-priority-secondary,

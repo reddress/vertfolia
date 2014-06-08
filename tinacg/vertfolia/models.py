@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.utils.timezone import utc
 
 # FIXME: add view for last 5 transactions added
 
@@ -40,8 +41,12 @@ class Transaction(models.Model):
     credit = models.ForeignKey(Account, related_name="+")
     
     def __str__(self):
-        fmt_string = "%s: %.2f %s / %s - %s"
-        return fmt_string % (self.date.strftime("%d/%m/%Y %H:%M"),
+        localtime = datetime(self.date.year, self.date.month, self.date.day,
+                             self.date.hour, self.date.minute,
+                             self.date.second, 0, utc) - timedelta(hours=3)
+
+        fmt_string = "LOCAL %s %.2f %s / %s - %s"
+        return fmt_string % (localtime.strftime("%d/%m/%Y %H:%M"),
                              self.value,
                              self.debit, self.credit, self.description[:80],)
 
