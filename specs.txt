@@ -7,6 +7,13 @@ WISHLIST
 Use tablesorter (see pontual.github.io) to separate debits and credits,
 for example, distinguish between amount spent and received when choosing WAL 
 
+Expenses total per day:
+first, iterate through accounts, marking True or False if it has Expense as
+a parent
+then, iterate through selected transactions (filter by time window) and add
+to dictionary totals like alesheets
+open a modal window
+
 COMPLETED
 ---------
 
