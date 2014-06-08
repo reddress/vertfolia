@@ -1,6 +1,15 @@
 VERTFOLIA - expense tracking with a tree structure
 DJANGO - 1.6
 
+WISHLIST
+--------
+
+Use tablesorter (see pontual.github.io) to separate debits and credits,
+for example, distinguish between amount spent and received when choosing WAL 
+
+COMPLETED
+---------
+
 Currency corresponds to a model, but all having DecimalField with 2 decimal
 places. Conversion must be done outside models
 
