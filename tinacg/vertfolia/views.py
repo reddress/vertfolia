@@ -13,6 +13,8 @@ from django.contrib.auth.decorators import login_required
 from .models import Account, Currency, Transaction
 from .models import get_balance_changes
 
+LATEST_COUNT = 15
+
 def print_balance_change(balance_change):
     output_str = ""
     for currency in balance_change:
@@ -35,7 +37,7 @@ def index(request):
 
 
     latest_transactions = (Transaction.objects.filter(user=request.user)
-                           .order_by("pk").reverse()[:5])
+                           .order_by("pk").reverse()[:LATEST_COUNT])
     
     return render(request, 'vertfolia/index.html',
                   { 'top_account': top_account,
@@ -139,7 +141,7 @@ def view_transactions(request):
 
 @login_required
 def view_latest_transactions(request):
-    print("in view_latest_transactions")
+    # print("in view_latest_transactions")
     transactions = (Transaction.objects.filter(user=request.user)
-                    .order_by("pk").reverse()[:5])
+                    .order_by("pk").reverse()[:LATEST_COUNT])
     return HttpResponse("<br>".join(map(str, transactions)))
