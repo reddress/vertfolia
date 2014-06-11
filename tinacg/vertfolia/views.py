@@ -189,3 +189,9 @@ def view_daily_expenses(request):
                  daily_totals[day]))
 
     return HttpResponse(daily_expenses_list)
+
+@login_required
+def search(request):
+    transactions = Transaction.objects.filter(user=request.user,
+                    description__icontains=request.POST["search_parameter"]).order_by("-date")
+    return HttpResponse("\n".join(map(str, transactions)))

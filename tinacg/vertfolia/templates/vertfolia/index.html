@@ -101,6 +101,7 @@ function tree_account_click_handler(account_short_name) {
 	<li><a href="#tabs_add_transaction"><b>Add transaction</b></a></li>
 	<li><a href="#tabs_view_transactions" id="view_transactions_tab_link"><b>View transactions</b></a></li>
 	<li><a href="#tabs_daily_expenses"><b>Daily expenses</b></a></li>
+	<li><a href="#tabs_search"><b>Search</b></a></li>
 
 	<div id="tabs_add_transaction">
 	  <br><br>
@@ -162,6 +163,18 @@ function tree_account_click_handler(account_short_name) {
 	  <pre class="transactions_list"><div id="daily_expenses"></div></pre>
 	
 	</div> <!-- CLOSE DAILY EXPENSES TAB -->
+
+	<div id="tabs_search">
+	  <br><br>
+	  
+	  <form id="search_form">
+		{% csrf_token %}
+		<input type="text" name="search_parameter" id="search_text" size="30">
+		<input type="submit"><br>(will not auto-update when adding transactions)
+	  </form>
+	  <pre class="transactions_list"><div id="search_results"></div></pre>
+	
+	</div> <!-- CLOSE SEARCH TAB -->
 
   </div> <!-- CLOSE TABS -->
   
@@ -382,6 +395,34 @@ $("#daily_expenses_form").submit(function (event) {
 
   request.always(function () {
 
+  });
+
+  event.preventDefault();  
+});
+
+$("#search_form").submit(function (event) {
+  if (request) {
+	request.abort();
+  }
+  var form = $(this);
+  var serializedData = form.serialize();
+
+  request = $.ajax({
+	url: "{% url 'search' %}",
+	type: "POST",
+	data: serializedData
+  });
+
+  request.done(function (response, textStatus, jqXHR) {
+	$("#search_results").html(response);
+  });
+
+  request.fail(function (jqXHR, textStatus, errorThrown) {
+	alert("Search error: " + errorThrown);
+  });
+
+  request.always(function () {
+	$("#search_text").val("");
   });
 
   event.preventDefault();  
