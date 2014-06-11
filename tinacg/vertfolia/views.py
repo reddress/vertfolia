@@ -9,6 +9,7 @@ from django.template import RequestContext
 from django.utils import timezone
 from django.utils.timezone import get_default_timezone, localtime, utc
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 
 from .models import Account, Currency, Transaction
 from .models import get_balance_changes
@@ -124,6 +125,17 @@ def update_tree(request):
                             mimetype="application/json")
     return HttpResponse("error updating tree")
 
+def format_transaction(transaction):
+    date_format = "%a %d/%m/%y"
+    fmt_string = "%s %s %.2f %s/%s %s\n"
+        
+    return (fmt_string %
+        (localtime(transaction.date.replace(tzinfo=utc)).strftime(date_format),
+         transaction.currency.short_name,
+         transaction.value,
+         transaction.debit, transaction.credit,
+         transaction.description,))
+    
 @login_required
 def view_transactions(request):
     start_date = unpack_date(request.POST["start_date_formatted"], False)
@@ -139,15 +151,17 @@ def view_transactions(request):
     except:
         pass  # checkbox unchecked
 
-    debit_transactions = Transaction.objects.filter(debit__in=account_list,
-                            date__gte=start_date, date__lte=end_date)
-    credit_transactions = Transaction.objects.filter(credit__in=account_list,
-                            date__gte=start_date, date__lte=end_date)
-    raw_transactions = reversed(sorted(set(chain(debit_transactions,
-                                             credit_transactions)),
-                                       key=lambda tr: tr.date))
-    
-    return HttpResponse("<br>".join(map(str, raw_transactions)))
+    # debit_transactions = Transaction.objects.filter(debit__in=account_list,
+    #                        date__gte=start_date, date__lte=end_date)
+    # credit_transactions = Transaction.objects.filter(credit__in=account_list,
+    #                        date__gte=start_date, date__lte=end_date)
+    # raw_transactions = reversed(sorted(set(chain(debit_transactions,
+    #                                        credit_transactions)),
+    #                                   key=lambda tr: tr.date))
+
+    raw_transactions = Transaction.objects.filter(Q(debit__in=account_list) | Q(credit__in=account_list), date__gte=start_date, date__lte=end_date).order_by("-date").select_related('currency', 'debit', 'credit')
+
+    return HttpResponse(map(format_transaction, raw_transactions))
 
 @login_required
 def view_latest_transactions(request):
@@ -194,4 +208,4 @@ def view_daily_expenses(request):
 def search(request):
     transactions = Transaction.objects.filter(user=request.user,
                     description__icontains=request.POST["search_parameter"]).order_by("-date")
-    return HttpResponse("\n".join(map(str, transactions)))
+    return HttpResponse(map(format_transaction, transactions))
