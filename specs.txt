@@ -5,38 +5,9 @@ WISHLIST
 --------
 
 Use tablesorter (see pontual.github.io) to separate debits and credits,
-for example, distinguish between amount spent and received when choosing WAL 
+for example, distinguish between amount spent and received when choosing WAL
 
-Expenses total per day:
-first, iterate through accounts, marking True or False if it has Expense as
-a parent
-then, iterate through selected transactions (filter by time window) and add
-to dictionary totals like alesheets
-open a modal window
-
-SEARCH TRANSACTIONS
-index.html
-
-add tab just like view transactions with a form
-
-javascript
-
-send ajax to search_transactions
-
-urls
-
-create path to search_transactions
-
-views
-
-add search_transactions that filters request.user, description__iexact post
-parameter
-
-RECURSIVE VIEW TRANSACTIONS
-include child transactions
-
-create list of all child accounts' ids, then use the 'in' filter:
-Entry.objects.filter(id__in=[1, 3, 4])
+look up how to use Ajax with django templates. render to response?
 
 COMPLETED
 ---------
@@ -71,3 +42,22 @@ import using account short name, warn if account is not found
 cannot export ALE sheets accounts becaues they don't have parents
 
 account has long and short names
+
+Expenses total per day:
+first, iterate through accounts, marking True or False if it has Expense as
+a parent
+then, iterate through selected transactions (filter by time window) and add
+to dictionary totals like alesheets
+open a modal window
+
+SEARCH TRANSACTIONS
+index.html
+
+add search_transactions that filters request.user, description__iexact post
+parameter
+
+RECURSIVE VIEW TRANSACTIONS
+include child transactions
+
+create list of all child accounts' ids, then use the 'in' filter:
+Entry.objects.filter(id__in=[1, 3, 4])
