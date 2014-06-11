@@ -100,6 +100,7 @@ function tree_account_click_handler(account_short_name) {
 	<ul>
 	<li><a href="#tabs_add_transaction"><b>Add transaction</b></a></li>
 	<li><a href="#tabs_view_transactions" id="view_transactions_tab_link"><b>View transactions</b></a></li>
+	<li><a href="#tabs_daily_expenses"><b>Daily expenses</b></a></li>
 
 	<div id="tabs_add_transaction">
 	  <br><br>
@@ -141,6 +142,9 @@ function tree_account_click_handler(account_short_name) {
 
 	  <form id="view_transactions_form">
 		{% csrf_token %}
+
+		include children accounts <input type="checkbox" name="include_children" onchange="$('#view_transactions_form').submit()"/><br>
+		
 		Account short name: <input type="text" name="active_account" id="active_account" size="8" value="{{ user.username }}" onclick="this.value=''">
 		<input type="submit">
 	  </form>
@@ -148,6 +152,16 @@ function tree_account_click_handler(account_short_name) {
 	  <pre class="transactions_list"><div id="transactions"></div></pre>
 	</div>
 
+	<div id="tabs_daily_expenses">
+	  <br><br>
+	  
+	  <form id="daily_expenses_form">
+		{% csrf_token %}
+		<input type="submit" value="Refresh list"> (will not auto-update when adding transactions)
+	  </form>
+	  <pre class="transactions_list"><div id="daily_expenses"></div></pre>
+	
+	</div> <!-- CLOSE DAILY EXPENSES TAB -->
 
   </div> <!-- CLOSE TABS -->
   
@@ -339,6 +353,38 @@ $("#latest_transactions_form").submit(function (event) {
   });
 
   event.preventDefault();
+});
+
+$("#daily_expenses_form").submit(function (event) {
+  if (request) {
+	request.abort();
+  }
+  var form = $(this);
+  var serializedData = form.serialize();
+
+  // add date info from time_window / = %2F
+  serializedData += "&start_date_formatted=" + $("#start_date").val().replace(/\//g, "%2F");
+  serializedData += "&end_date_formatted=" + $("#end_date").val().replace(/\//g, "%2F");
+  
+  request = $.ajax({
+	url: "{% url 'view_daily_expenses' %}",
+	type: "POST",
+	data: serializedData
+  });
+
+  request.done(function (response, textStatus, jqXHR) {
+	$("#daily_expenses").html(response);
+  });
+
+  request.fail(function (jqXHR, textStatus, errorThrown) {
+	alert("Daily Expenses error: " + errorThrown);
+  });
+
+  request.always(function () {
+
+  });
+
+  event.preventDefault();  
 });
 
 </script>

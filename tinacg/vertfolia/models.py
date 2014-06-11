@@ -45,7 +45,7 @@ class Transaction(models.Model):
                                         self.date.second, 0, utc))
 
         # date_format = "%a %d/%m/%y %H:%M"
-        date_format = "%a %d/%m"
+        date_format = "%a %d/%m/%y"
         fmt_string = "%s %s %.2f %s/%s %s"
         
         return fmt_string % (local_time.strftime(date_format),
@@ -206,3 +206,23 @@ def add_transactions_from_file(user, filename):
     for line in file:
         add_transaction_from_string(user, line.strip())
     # usage: see python shell comments above (for accounts)
+
+def is_parent(parent, account):
+    # conceptually simple, but slow
+    # return True is parent is account's parent
+    if parent == None or account == None:
+        return False
+    if parent == account.parent:
+        return True
+    else:
+        return is_parent(parent, account.parent)
+    
+def get_children_accounts(parent):
+    user = parent.user
+    user_accounts = Account.objects.filter(user=user)
+    children = []
+
+    for account in user_accounts:
+        if is_parent(parent, account):
+            children.append(account)
+    return children

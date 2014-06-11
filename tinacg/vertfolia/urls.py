@@ -13,4 +13,7 @@ urlpatterns = patterns('',
                        url(r'^view_latest_transactions/$',
                            views.view_latest_transactions,
                            name='view_latest_transactions'),
+                       url(r'^view_daily_expenses/$',
+                           views.view_daily_expenses,
+                           name='view_daily_expenses'),
                        )

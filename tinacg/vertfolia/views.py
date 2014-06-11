@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from itertools import chain
 
 from django.shortcuts import render, render_to_response
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseServerError
 from django.template import RequestContext
 from django.utils import timezone
 from django.utils.timezone import get_default_timezone, localtime, utc
@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 
 from .models import Account, Currency, Transaction
 from .models import get_balance_changes
+from .models import get_balance_changes, get_children_accounts
 
 LATEST_COUNT = 15
 
@@ -130,13 +131,22 @@ def view_transactions(request):
     account = Account.objects.get(user=request.user,
                                   short_name__iexact=request.POST["active_account"])
     
-    debit_transactions = Transaction.objects.filter(debit=account,
+    account_list = [account]
+
+    try:
+        if request.POST["include_children"] == "on":
+            account_list = account_list + get_children_accounts(account)
+    except:
+        pass  # checkbox unchecked
+
+    debit_transactions = Transaction.objects.filter(debit__in=account_list,
                             date__gte=start_date, date__lte=end_date)
-    credit_transactions = Transaction.objects.filter(credit=account,
+    credit_transactions = Transaction.objects.filter(credit__in=account_list,
                             date__gte=start_date, date__lte=end_date)
-    raw_transactions = reversed(sorted(chain(debit_transactions,
-                                             credit_transactions),
+    raw_transactions = reversed(sorted(set(chain(debit_transactions,
+                                             credit_transactions)),
                                        key=lambda tr: tr.date))
+    
     return HttpResponse("<br>".join(map(str, raw_transactions)))
 
 @login_required
@@ -145,3 +155,37 @@ def view_latest_transactions(request):
     transactions = (Transaction.objects.filter(user=request.user)
                     .order_by("pk").reverse()[:LATEST_COUNT])
     return HttpResponse("<br>".join(map(str, transactions)))
+
+@login_required
+def view_daily_expenses(request):
+    start_date = unpack_date(request.POST["start_date_formatted"], False)
+    end_date = unpack_date(request.POST["end_date_formatted"], True)
+    end_date_count = unpack_date(request.POST["end_date_formatted"], False)
+    expense_account = Account.objects.get(user=request.user,
+                                          short_name="Expense")
+    account_list = ([expense_account] +
+                    get_children_accounts(expense_account))
+
+    debit_transactions = Transaction.objects.filter(debit__in=account_list,
+                            date__gte=start_date, date__lte=end_date)
+    raw_transactions = set(debit_transactions)
+
+    daily_totals = {}
+
+    delta_days = (end_date_count-start_date).days + 1
+    for n in range(delta_days):
+        day = (start_date + timedelta(n)).strftime("%Y-%m-%d")
+        daily_totals[day] = 0
+
+    for transaction in raw_transactions:
+        daily_totals[localtime(transaction.date.replace(tzinfo=utc)).strftime("%Y-%m-%d")] += transaction.value
+
+    daily_expenses_list = []
+
+    for day in reversed(sorted(daily_totals)):
+        format_string = "%s %.2f\n"
+        daily_expenses_list.append(format_string %
+                (datetime.strptime(day, "%Y-%m-%d").strftime("%a %d/%m/%y"),
+                 daily_totals[day]))
+
+    return HttpResponse(daily_expenses_list)
