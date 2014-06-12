@@ -5,8 +5,10 @@
 	<link rel="stylesheet" href="{% static "js/jquery.treeview.css" %}" />
 	<link rel="stylesheet" href="{% static "js/screen.css" %}"/>
 	<link rel="stylesheet" href="{% static "css/main.css" %}"/>
+	<link rel="stylesheet" href="{% static "css/tablesorterblue/style.css" %}"/>
 	<script src="{% static "js/jquery-1.11.0.min.js" %}"></script>
 	<script src="{% static "js/jquery.treeview.js" %}"></script>
+	<script src="{% static "js/jquery.tablesorter.min.js" %}"></script>
 
 	<!-- jquery UI -->
 	<link rel="stylesheet" href="{% static "js/jquery-ui-1.10.4.custom/css/flick/jquery-ui-1.10.4.custom.css" %}" />
@@ -114,7 +116,7 @@ function tree_account_click_handler(account_short_name) {
 
 		<br>
 		
-		desc: <input type="text" name="description" size="40"><br>
+		desc: <input type="text" name="description" size="40" id="add_transaction_description"><br>
 		value: <input type="text" name="value" size="10"><br>
   
 		debit acct: <input type="text" name="debit" size="9" id="add_transaction_debit_name">
@@ -150,7 +152,7 @@ function tree_account_click_handler(account_short_name) {
 		<input type="submit">
 	  </form>
 
-	  <pre class="transactions_list"><div id="transactions"></div></pre>
+	  <div id="transactions"></div>
 	</div>
 
 	<div id="tabs_daily_expenses">
@@ -172,7 +174,7 @@ function tree_account_click_handler(account_short_name) {
 		<input type="text" name="search_parameter" id="search_text" size="30">
 		<input type="submit"><br>(will not auto-update when adding transactions)
 	  </form>
-	  <pre class="transactions_list"><div id="search_results"></div></pre>
+	  <div id="search_results"></div>
 	
 	</div> <!-- CLOSE SEARCH TAB -->
 
@@ -301,6 +303,7 @@ $("#end_date").change(function (event) {
 	request.always(function () {
 	  inputs.prop("disabled", false);
 	  $("#add_transaction_form").find("input[type=text]").val("");
+      $("#add_transaction_description").focus();
 	});
 
 	event.preventDefault();

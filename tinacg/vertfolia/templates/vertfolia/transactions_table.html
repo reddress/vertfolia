@@ -1,0 +1,48 @@
+{% load key %}
+
+{% if search_total %}
+<b>Total: </b> {{ search_currency }} {{ search_total }}
+{% endif %}
+
+<table id="transactions_table" class="tablesorter">
+  <thead>
+	<tr>
+	  <th width="5%" nowrap>Date</th>
+	  <th width="5%" nowrap>Debit {{ debit_total|floatformat:2 }}</th>
+	  <th width="5%" nowrap>Credit {{ credit_total|floatformat:2 }}</th>
+	  <th width="5%">Value</th>
+	  <th width="80%">Description</th>
+	</tr>
+  </thead>
+  <tbody>
+	{% for transaction in transactions %}
+	<tr>
+	  <td nowrap>{{ transaction.date|date:"D j/n/Y" }}</td>
+
+	  <td>
+	  {% if transaction.debit.short_name == account_name %}
+	  {{ transaction.value|floatformat:2 }}
+		{% else %}
+      <a onclick="$('#active_account').val('{{ transaction.debit.short_name }}'); $('#view_transactions_form').submit();">{{ transaction.debit.short_name }}</a>
+	  {% endif %}
+	  </td>
+
+	  <td>
+	  {% if transaction.credit.short_name == account_name %}
+	  {{ transaction.value|floatformat:2 }}
+		{% else %}
+        <a onclick="$('#active_account').val('{{ transaction.credit.short_name }}'); $('#view_transactions_form').submit();">{{ transaction.credit.short_name }}</a>
+	  {% endif%}
+	  </td>
+	  
+	  <td nowrap>{{ transaction.currency }} {{ transaction.value|floatformat:2 }}</td>
+
+      <td>{{ transaction.description }}</td>
+	</tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<script>
+	$("#transactions_table").tablesorter();
+</script>

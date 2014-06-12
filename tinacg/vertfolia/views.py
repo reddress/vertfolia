@@ -14,6 +14,7 @@ from django.db.models import Q
 from .models import Account, Currency, Transaction
 from .models import get_balance_changes
 from .models import get_balance_changes, get_children_accounts
+from .models import is_parent
 
 LATEST_COUNT = 15
 
@@ -159,9 +160,28 @@ def view_transactions(request):
     #                                        credit_transactions)),
     #                                   key=lambda tr: tr.date))
 
-    raw_transactions = Transaction.objects.filter(Q(debit__in=account_list) | Q(credit__in=account_list), date__gte=start_date, date__lte=end_date).order_by("-date").select_related('currency', 'debit', 'credit')
+    transactions = Transaction.objects.filter(Q(debit__in=account_list) | Q(credit__in=account_list), date__gte=start_date, date__lte=end_date).order_by("-date").select_related('currency', 'debit', 'credit')
 
-    return HttpResponse(map(format_transaction, raw_transactions))
+    debit_total = 0
+    credit_total = 0
+
+    account_children = [account] + get_children_accounts(account)
+    
+    account_short_name = account.short_name
+    for transaction in transactions:
+        # if transaction.debit.short_name == account_short_name:
+        if transaction.debit in account_children:
+            debit_total += transaction.value
+        # if transaction.credit.short_name == account_short_name:
+        if transaction.credit in account_children:
+            credit_total += transaction.value
+            
+    # return HttpResponse(map(format_transaction, raw_transactions))
+    return render_to_response("vertfolia/transactions_table.html",
+                              { 'transactions': transactions,
+                                'account_name': account_short_name,
+                                'debit_total': debit_total,
+                                'credit_total': credit_total, })
 
 @login_required
 def view_latest_transactions(request):
@@ -206,6 +226,21 @@ def view_daily_expenses(request):
 
 @login_required
 def search(request):
-    transactions = Transaction.objects.filter(user=request.user,
-                    description__icontains=request.POST["search_parameter"]).order_by("-date")
-    return HttpResponse(map(format_transaction, transactions))
+    transactions = Transaction.objects.filter(user=request.user, description__icontains=request.POST["search_parameter"]).order_by("-date")
+
+    debit_total = 0
+    credit_total = 0
+    search_total = 0
+
+    for transaction in transactions:
+        search_total += transaction.value
+
+    currency = "" if not transactions else transactions[0].currency.short_name
+
+    return render_to_response("vertfolia/transactions_table.html",
+                              { 'transactions': transactions,
+                                'account_name': 'SEARCH',
+                                'debit_total': debit_total,
+                                'credit_total': credit_total,
+                                'search_total': search_total,
+                                'search_currency': currency, })
