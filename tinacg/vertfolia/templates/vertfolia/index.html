@@ -146,7 +146,7 @@ function tree_account_click_handler(account_short_name) {
 	  <form id="view_transactions_form">
 		{% csrf_token %}
 
-		include children accounts <input type="checkbox" name="include_children" onchange="$('#view_transactions_form').submit()"/> <a onclick="$('#active_account').val('{{ user.username }}'); $('#view_transactions_form').submit();">(click to set '{{ user.username }}')</a><br>
+		include children accounts <input type="checkbox" name="include_children" onchange="$('#view_transactions_form').submit()" /> <a onclick="$('#active_account').val('{{ user.username }}'); $('#view_transactions_form').submit();">(click here to set '{{ user.username }}')</a><br>
 		
 		Account short name: <input type="text" name="active_account" id="active_account" size="8" value="{{ user.username }}" onclick="this.value=''">
 		<input type="submit">
