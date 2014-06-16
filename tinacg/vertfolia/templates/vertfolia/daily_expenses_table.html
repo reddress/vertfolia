@@ -1,0 +1,2 @@
+{% load key %}{% for day in days %}<span onclick="$('#expense_list_{{ day }}').toggle()">{{ daily_header|key:day }}</span>
+<div style="display: none" id="expense_list_{{ day }}">{% for transaction in daily_transactions|key:day %}{{ transaction }}{% endfor %}</div>{% endfor %}

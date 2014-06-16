@@ -136,6 +136,15 @@ def format_transaction(transaction):
          transaction.value,
          transaction.debit, transaction.credit,
          transaction.description,))
+
+def format_transaction_short(transaction):
+    fmt_string = "%s %.2f %s/%s %s\n"
+        
+    return (fmt_string %
+        (transaction.currency.short_name,
+         transaction.value,
+         transaction.debit, transaction.credit,
+         transaction.description,))
     
 @login_required
 def view_transactions(request):
@@ -205,24 +214,43 @@ def view_daily_expenses(request):
     raw_transactions = set(debit_transactions)
 
     daily_totals = {}
+    daily_header = {}
+    daily_transactions = {}
+    days_list = []
 
     delta_days = (end_date_count-start_date).days + 1
     for n in range(delta_days):
         day = (start_date + timedelta(n)).strftime("%Y-%m-%d")
+        days_list.append(day)
         daily_totals[day] = 0
+        daily_transactions[day] = []
 
     for transaction in raw_transactions:
         daily_totals[localtime(transaction.date.replace(tzinfo=utc)).strftime("%Y-%m-%d")] += transaction.value
+        daily_transactions[localtime(transaction.date.replace(tzinfo=utc)).strftime("%Y-%m-%d")].append("    " + format_transaction_short(transaction))
 
-    daily_expenses_list = []
+    for day in days_list:
+        daily_header[day] = "%s %.2f" % (datetime.strptime(day, "%Y-%m-%d").strftime("%a %d/%m/%y"), daily_totals[day])
+        
+    # daily_expenses_list = []
 
-    for day in reversed(sorted(daily_totals)):
-        format_string = "%s %.2f\n"
-        daily_expenses_list.append(format_string %
-                (datetime.strptime(day, "%Y-%m-%d").strftime("%a %d/%m/%y"),
-                 daily_totals[day]))
+    # for day in reversed(sorted(daily_totals)):
+    #     day_string = '<span onclick="$(\'#expense_list_' + day + '\').toggle()">%s %.2f</span>'
+    #     list_string = '<div style="display:none" id="%s">%s</div>'
+    #     format_string = day_string + list_string
+    #     daily_expenses_list.append(format_string %
+    #             (datetime.strptime(day, "%Y-%m-%d").strftime("%a %d/%m/%y"),
+    #              daily_totals[day],
+    #              "expense_list_" + day,  # div id
+    #              "".join(daily_transactions[day]).rstrip()))
 
-    return HttpResponse(daily_expenses_list)
+    # return HttpResponse(daily_expenses_list)
+    return render_to_response("vertfolia/daily_expenses_table.html",
+                              { 'days': days_list[::-1],
+                                'daily_header': daily_header,
+                                'daily_totals': daily_totals,
+                                'daily_transactions': daily_transactions, })
+    
 
 @login_required
 def search(request):
