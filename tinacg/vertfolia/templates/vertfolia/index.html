@@ -309,6 +309,8 @@ $("#end_date").change(function (event) {
   });
 
 $("#view_transactions_form").submit(function (event) {
+  $("#transactions").html("Please wait");
+  
   if (request) {
 	request.abort();
   }
@@ -371,6 +373,8 @@ $("#latest_transactions_form").submit(function (event) {
 });
 
 $("#daily_expenses_form").submit(function (event) {
+  $("#daily_expenses").html("Please wait");
+
   if (request) {
 	request.abort();
   }

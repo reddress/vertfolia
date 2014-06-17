@@ -209,10 +209,9 @@ def view_daily_expenses(request):
     account_list = ([expense_account] +
                     get_children_accounts(expense_account))
 
-    debit_transactions = Transaction.objects.filter(debit__in=account_list,
-                            date__gte=start_date, date__lte=end_date)
-    raw_transactions = set(debit_transactions)
-
+    raw_transactions = Transaction.objects.filter(debit__in=account_list,
+                            date__gte=start_date, date__lte=end_date).distinct()
+    
     daily_totals = {}
     daily_header = {}
     daily_transactions = {}
@@ -226,25 +225,14 @@ def view_daily_expenses(request):
         daily_transactions[day] = []
 
     for transaction in raw_transactions:
-        daily_totals[localtime(transaction.date.replace(tzinfo=utc)).strftime("%Y-%m-%d")] += transaction.value
-        daily_transactions[localtime(transaction.date.replace(tzinfo=utc)).strftime("%Y-%m-%d")].append("    " + format_transaction_short(transaction))
+        date_key = localtime(transaction.date.replace(tzinfo=utc)).strftime("%Y-%m-%d")
+        
+        daily_totals[date_key] += transaction.value
+        daily_transactions[date_key].append("    " + format_transaction_short(transaction))
 
     for day in days_list:
         daily_header[day] = "%s %.2f" % (datetime.strptime(day, "%Y-%m-%d").strftime("%a %d/%m/%y"), daily_totals[day])
         
-    # daily_expenses_list = []
-
-    # for day in reversed(sorted(daily_totals)):
-    #     day_string = '<span onclick="$(\'#expense_list_' + day + '\').toggle()">%s %.2f</span>'
-    #     list_string = '<div style="display:none" id="%s">%s</div>'
-    #     format_string = day_string + list_string
-    #     daily_expenses_list.append(format_string %
-    #             (datetime.strptime(day, "%Y-%m-%d").strftime("%a %d/%m/%y"),
-    #              daily_totals[day],
-    #              "expense_list_" + day,  # div id
-    #              "".join(daily_transactions[day]).rstrip()))
-
-    # return HttpResponse(daily_expenses_list)
     return render_to_response("vertfolia/daily_expenses_table.html",
                               { 'days': days_list[::-1],
                                 'daily_header': daily_header,
