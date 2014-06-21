@@ -7,7 +7,6 @@ from django.utils.timezone import utc, localtime
 
 # Transactions prior to 1901 are ignored
 MIN_DATE = datetime(1901, 1, 1).replace(tzinfo=timezone.utc)
-MAX_DATE = timezone.now()
 
 class Currency(models.Model):
     class Meta:
@@ -116,7 +115,7 @@ class MoneyUnit:
 #             print("found id " + account.id)
 #     return balance_changes
 
-def leaf_to_root_balance_changes(user, start_date=MIN_DATE, end_date=MAX_DATE):
+def leaf_to_root_balance_changes(user, start_date=MIN_DATE, end_date=timezone.now()):
     transactions = (Transaction.objects.select_related('debit', 'credit',
                                                        'currency', 'parent')
                     .filter(user=user,
@@ -153,7 +152,7 @@ def leaf_to_root_balance_changes(user, start_date=MIN_DATE, end_date=MAX_DATE):
 
     return balance_changes
 
-def get_balance_changes(user, start_date=MIN_DATE, end_date=MAX_DATE):
+def get_balance_changes(user, start_date=MIN_DATE, end_date=timezone.now()):
     balance_changes = leaf_to_root_balance_changes(user, start_date, end_date)
 
     balance_changes_formatted = {}
