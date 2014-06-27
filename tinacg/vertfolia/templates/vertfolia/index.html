@@ -66,13 +66,13 @@ function get_timestamp() {
   var hour = now.getHours();
   var min = now.getMinutes();
   var sec = now.getSeconds();
-  if (hour.toString().length == 1) {
+  if (hour < 10) {
     hour = '0' + hour;
   }
-  if (min.toString().length == 1) {
+  if (min < 10) {
     min = '0' + min;
   }
-  if (sec.toString().length == 1) {
+  if (sec < 10) {
     sec = '0' + sec;
   }
   
