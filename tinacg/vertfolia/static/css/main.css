@@ -4,7 +4,7 @@ i {
 
 #account_tree {
     position: fixed;
-    width: 350px;
+    width: 300px;
     left: 10px;
     top: 10px;
     bottom: 0;
@@ -15,7 +15,7 @@ i {
 
 #main_div {
     position: fixed;
-    left: 370px;
+    left: 320px;
     top: 10px;
     bottom: 0;
     right: 0;
