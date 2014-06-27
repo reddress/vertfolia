@@ -61,6 +61,23 @@ function tree_account_click_handler(account_short_name) {
   $("#view_transactions_tab_link").click();
 }
 
+function get_timestamp() {
+  var now = new Date();
+  var hour = now.getHours();
+  var min = now.getMinutes();
+  var sec = now.getSeconds();
+  if (hour.toString().length == 1) {
+    hour = '0' + hour;
+  }
+  if (min.toString().length == 1) {
+    min = '0' + min;
+  }
+  if (sec.toString().length == 1) {
+    sec = '0' + sec;
+  }
+  
+  return hour + ":" + min + ":" + sec;
+}
 	</script>
   </head>
   <body>
@@ -112,8 +129,9 @@ function tree_account_click_handler(account_short_name) {
 		{% csrf_token %}
 
 		Date: <input id="add_transaction_day" name="day" size="10" value="{{ time|date:"j/n/Y" }}">
-		Time: <input id="add_transaction_time" name="time" size="10" value="{{ time|date:"H:i" }}">
-
+		<!-- Time: <input id="add_transaction_time" name="time" size="10" value="{{ time|date:"H:i:s" }}"> -->
+		Time: <input id="add_transaction_time" name="time" size="10">
+		
 		<br>
 		
 		desc: <input type="text" name="description" size="40" id="add_transaction_description"><br>
@@ -187,6 +205,9 @@ function tree_account_click_handler(account_short_name) {
   
 <script>
 
+// Set current time
+$("#add_transaction_time").val(get_timestamp());
+  
 function days_back(delta_days) {
   var end_date_string = $("#end_date").val();
   var end_date_components = end_date_string.split("/");
@@ -302,6 +323,7 @@ $("#end_date").change(function (event) {
 	request.always(function () {
 	  inputs.prop("disabled", false);
 	  $("#add_transaction_form").find("input[type=text]").val("");
+      $("#add_transaction_time").val(get_timestamp());
 	  $("#add_transaction_description").focus();
 	});
 

@@ -68,9 +68,9 @@ def add_transaction(request):
                                 short_name__iexact=request.POST["credit"])
 
         year_month_day = list(map(int, request.POST["day"].split("/")))[::-1]
-        hour_minute = list(map(int, request.POST["time"].split(":")))
+        hour_minute_second = list(map(int, request.POST["time"].split(":")))
 
-        add_date = localtime(datetime(*(year_month_day+hour_minute),
+        add_date = localtime(datetime(*(year_month_day+hour_minute_second),
                                       tzinfo=get_default_timezone()), utc)
             
         new_transaction = Transaction(user=request.user,
