@@ -1,0 +1,15 @@
+Basic Form:
+Assets = Liabilites + Equity
+
+Equity = Contributed capital + Retained earnings
+
+Retained earnings = Net income - Dividends
+
+Net income = Income - Expenses
+
+Substituting:
+Assets = Liabilites + Contributed capital + Income - Expenses - Dividends
+
+Assets + Expenses + Dividends = Liabilites + Contributed capital + Income
+
+Assume Dividends = 0 and rename Contributed capital as Equity
