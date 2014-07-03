@@ -247,7 +247,7 @@ add_autofill_handler("#same_day_autofill", 0);
 /////////////////
 
 
-// Add transaction > update tree > update view transactions > update latest
+// Add transaction > update tree > update latest
 
 var request;
 
@@ -272,9 +272,11 @@ function update_views() {
 	  });
 	  
 	  // update "View transactions" tab
-	  if ($("#active_account").val() != "") {
-		$("#view_transactions_form").submit();
-	  }
+	// if ($("#active_account").val() != "") {
+	//	$("#view_transactions_form").submit();
+	//  }
+
+    $("#latest_transactions_form").submit();
   });
   request.fail(function (jqXHR, textStatus, errorThrown) {
 	alert("update tree error: " + errorThrown);
@@ -313,7 +315,7 @@ $("#end_date").change(function (event) {
 
 	request.done(function (response, textStatus, jqXHR) {
 	  update_views();
-	  //	  $("#latest_transactions_form").submit();
+	  // $("#latest_transactions_form").submit();
 	});
 
 	request.fail(function (jqXHR, textStatus, errorThrown) {
@@ -351,7 +353,7 @@ $("#view_transactions_form").submit(function (event) {
 
   request.done(function (response, textStatus, jqXHR) {
 	$("#transactions").html(response);
-	$("#latest_transactions_form").submit();
+	// $("#latest_transactions_form").submit();
   });
 
   request.fail(function (jqXHR, textStatus, errorThrown) {
