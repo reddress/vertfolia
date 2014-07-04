@@ -1,0 +1,2016 @@
+
+<!-- saved from url=(0032)http://127.0.0.1:8000/vertfolia/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" href="http://127.0.0.1:8000/static/js/jquery.treeview.css">
+	<link rel="stylesheet" href="http://127.0.0.1:8000/static/js/screen.css">
+	<link rel="stylesheet" href="http://127.0.0.1:8000/static/css/main.css">
+	<link rel="stylesheet" href="http://127.0.0.1:8000/static/css/tablesorterblue/style.css">
+	<script src="./vertfolia_files/jquery-1.11.0.min.js"></script>
+	<script src="./vertfolia_files/jquery.treeview.js"></script>
+	<script src="./vertfolia_files/jquery.tablesorter.min.js"></script>
+
+	<!-- jquery UI -->
+	<link rel="stylesheet" href="http://127.0.0.1:8000/static/js/jquery-ui-1.10.4.custom/css/flick/jquery-ui-1.10.4.custom.css">
+	
+	<script src="./vertfolia_files/jquery-ui-1.10.4.custom.js"></script>
+	
+	<script type="text/javascript">
+  $(function () {
+	$("#tree").treeview({
+	  animated: "fast",
+	  control:"#sidetreecontrol",
+	  prerendered: true,
+	  persist: "location"
+	});
+
+	// jquery ui
+
+	$("#start_date").datepicker({ dateFormat: "d/m/yy" });
+	$("#end_date").datepicker({ dateFormat: "d/m/yy" });
+
+	$("#add_transaction_day").datepicker({ dateFormat: "d/m/yy" });
+
+	$("#tabs").tabs();
+	
+	var account_short_names = [
+
+	 "ADJ","AULA","Asset","BACIO","BANK","BAR","BILH","BOOK","BOUL","BRall","BRcor","BRjur","BRpou","BRtes","BUS","CELL","CGDac","CGDall","CGDcor","CGDin","CGDtes","CLAR","CLOTH","COIN","COMM","CORR","CRED","DENT","DISC","DOAC","DRW","ELEC","EMR","ENT","EXP","Equity","Expense","FAM","FID","FOOD","FOODs","FOUND","FUTU","GIBI","GROC","HAIR","HOME","INC","ITall","ITcor","ITjur","ITpou","Income","JUNK","Liability","MED","MEDS","MERC","METRO","OPEN","PAO","PEIX","PIZZ","PRES","PREtr","PSIQ","PTLsal","RACE","REST","SAC","SELF","SHORTS","STM","STOR","SVC","TARbr","TARit","TIO","TR","TRAV","WAL","WALall","WLbak","tina"
+
+	];
+
+	$("#add_transaction_debit_name").autocomplete({
+	  source: account_short_names,
+	  delay: 5
+	});
+	$("#add_transaction_credit_name").autocomplete({
+	  source: account_short_names,
+	  delay: 5
+	});
+	$("#active_account").autocomplete({
+	  source: account_short_names,
+	  delay: 5
+	});
+
+  })
+
+// Handle clicks on tree
+function tree_account_click_handler(account_short_name) {
+  $("#active_account").val(account_short_name);
+  $("#view_transactions_form").submit();
+  $("#view_transactions_tab_link").click();
+}
+
+function get_timestamp() {
+  var now = new Date();
+  var hour = now.getHours();
+  var min = now.getMinutes();
+  var sec = now.getSeconds();
+  if (hour < 10) {
+    hour = '0' + hour;
+  }
+  if (min < 10) {
+    min = '0' + min;
+  }
+  if (sec < 10) {
+    sec = '0' + sec;
+  }
+  
+  return hour + ":" + min + ":" + sec;
+}
+	</script>
+  </head>
+  <body>
+
+<!-- ACCOUNT TREE -->
+<div id="account_tree">
+  
+
+<div id="sidetree">
+<!--  <div class="treeheader">&nbsp;</div> -->
+  <div id="sidetreecontrol"> <a href="http://127.0.0.1:8000/vertfolia/?#">Collapse All</a> | <a href="http://127.0.0.1:8000/vertfolia/?#">Expand All</a> </div>
+
+  
+
+
+
+<ul class="treeview" id="tree">
+
+
+  
+	<li class="collapsable">
+	  
+		<div class="hitarea collapsable-hitarea"></div>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;Asset&#39;);" title="Asset">
+		<!-- [2] -->
+		Assets
+		<span id="account_balance_2">
+			R$ 21560.80  
+		</span>
+	  </a>
+	
+	  
+
+
+
+<ul style="">
+
+
+  
+	<li class="collapsable">
+	  
+		<div class="hitarea collapsable-hitarea"></div>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;BRall&#39;);" title="BRall">
+		<!-- [57] -->
+		Bradesco
+		<span id="account_balance_57">
+			R$ 11840.35  
+		</span>
+	  </a>
+	
+	  
+
+
+
+<ul style="">
+
+
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;BRcor&#39;);" title="BRcor">
+		<!-- [36] -->
+		Bradesco C. Corrente
+		<span id="account_balance_36">
+			R$ 483.81  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;BRpou&#39;);" title="BRpou">
+		<!-- [37] -->
+		Bradesco Poupanca
+		<span id="account_balance_37">
+			R$ 4372.66  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;BRtes&#39;);" title="BRtes">
+		<!-- [35] -->
+		Bradesco Tesouro
+		<span id="account_balance_35">
+			R$ 6983.88  
+		</span>
+	  </a>
+	
+	</li>
+  
+</ul>
+
+<!-- previous money display 
+
+	  
+
+-->
+
+	
+	</li>
+  
+	<li class="collapsable">
+	  
+		<div class="hitarea collapsable-hitarea"></div>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;CGDall&#39;);" title="CGDall">
+		<!-- [59] -->
+		CGD
+		<span id="account_balance_59">
+			R$ 20585.99  
+		</span>
+	  </a>
+	
+	  
+
+
+
+<ul style="">
+
+
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;CGDac&#39;);" title="CGDac">
+		<!-- [33] -->
+		CGD Acoes
+		<span id="account_balance_33">
+			R$ 2766.54  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;CGDcor&#39;);" title="CGDcor">
+		<!-- [34] -->
+		CGD Saldo Corrente
+		<span id="account_balance_34">
+			R$ 1209.02  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;CGDtes&#39;);" title="CGDtes">
+		<!-- [32] -->
+		CGD Tesouro Direto
+		<span id="account_balance_32">
+			R$ 16610.43  
+		</span>
+	  </a>
+	
+	</li>
+  
+</ul>
+
+<!-- previous money display 
+
+	  
+
+-->
+
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;CLAR&#39;);" title="CLAR">
+		<!-- [42] -->
+		Claro pre-pago
+		<span id="account_balance_42">
+			R$ 49.75  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li class="collapsable">
+	  
+		<div class="hitarea collapsable-hitarea"></div>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;ITall&#39;);" title="ITall">
+		<!-- [56] -->
+		Itau
+		<span id="account_balance_56">
+			R$ 45039.49  
+		</span>
+	  </a>
+	
+	  
+
+
+
+<ul style="">
+
+
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;ITcor&#39;);" title="ITcor">
+		<!-- [10] -->
+		Itau Conta Corrente
+		<span id="account_balance_10">
+			R$ 1374.04  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;ITpou&#39;);" title="ITpou">
+		<!-- [8] -->
+		Itau Poupanca
+		<span id="account_balance_8">
+			R$ 43665.45  
+		</span>
+	  </a>
+	
+	</li>
+  
+</ul>
+
+<!-- previous money display 
+
+	  
+
+-->
+
+	
+	</li>
+  
+	<li class="collapsable">
+	  
+		<div class="hitarea collapsable-hitarea"></div>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;PREtr&#39;);" title="PREtr">
+		<!-- [58] -->
+		Prepaid Transit
+		<span id="account_balance_58">
+			R$ 167.07  
+		</span>
+	  </a>
+	
+	  
+
+
+
+<ul style="">
+
+
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;BILH&#39;);" title="BILH">
+		<!-- [44] -->
+		Bilhete Unico
+		<span id="account_balance_44">
+			R$ 71.07  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;FID&#39;);" title="FID">
+		<!-- [43] -->
+		Cartao Fidelidade
+		<span id="account_balance_43">
+			R$ 96.00  
+		</span>
+	  </a>
+	
+	</li>
+  
+</ul>
+
+<!-- previous money display 
+
+	  
+
+-->
+
+	
+	</li>
+  
+	<li class="collapsable">
+	  
+		<div class="hitarea collapsable-hitarea"></div>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;STOR&#39;);" title="STOR">
+		<!-- [61] -->
+		Storage
+		<span id="account_balance_61">
+			R$ 2298.30  
+		</span>
+	  </a>
+	
+	  
+
+
+
+<ul style="">
+
+
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;COIN&#39;);" title="COIN">
+		<!-- [48] -->
+		Coins and Small bills
+		<span id="account_balance_48">
+			R$ 228.30  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;DRW&#39;);" title="DRW">
+		<!-- [17] -->
+		Drawer
+		<span id="account_balance_17">
+			R$ 1240.00  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;EMR&#39;);" title="EMR">
+		<!-- [21] -->
+		Emergency Locations
+		<span id="account_balance_21">
+			R$ 830.00  
+		</span>
+	  </a>
+	
+	</li>
+  
+</ul>
+
+<!-- previous money display 
+
+	  
+
+-->
+
+	
+	</li>
+  
+	<li class="collapsable">
+	  
+		<div class="hitarea collapsable-hitarea"></div>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;WALall&#39;);" title="WALall">
+		<!-- [60] -->
+		Wallets
+		<span id="account_balance_60">
+			R$ 297.00  
+		</span>
+	  </a>
+	
+	  
+
+
+
+<ul style="">
+
+
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;WLbak&#39;);" title="WLbak">
+		<!-- [16] -->
+		Back wallet
+		<span id="account_balance_16">
+			R$ 199.00  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;WAL&#39;);" title="WAL">
+		<!-- [7] -->
+		Front wallet
+		<span id="account_balance_7">
+			R$ 88.00  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;SHORTS&#39;);" title="SHORTS">
+		<!-- [55] -->
+		Running Shorts
+		<span id="account_balance_55">
+			R$ 10.00  
+		</span>
+	  </a>
+	
+	</li>
+  
+</ul>
+
+<!-- previous money display 
+
+	  
+
+-->
+
+	
+	</li>
+  
+</ul>
+
+<!-- previous money display 
+
+	  
+
+-->
+
+	
+	</li>
+  
+	<li class="collapsable">
+	  
+		<div class="hitarea collapsable-hitarea"></div>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;Equity&#39;);" title="Equity">
+		<!-- [4] -->
+		Equity
+		<span id="account_balance_4">
+			R$ 21656.71  
+		</span>
+	  </a>
+	
+	  
+
+
+
+<ul style="">
+
+
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;ADJ&#39;);" title="ADJ">
+		<!-- [54] -->
+		Adjustments
+		<span id="account_balance_54">
+			R$ 175.40  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;DISC&#39;);" title="DISC">
+		<!-- [46] -->
+		Discounts and rebates
+		<span id="account_balance_46">
+			R$ 52.40  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;OPEN&#39;);" title="OPEN">
+		<!-- [13] -->
+		Opening Balance
+		<span id="account_balance_13">
+			R$ 22928.91  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;TIO&#39;);" title="TIO">
+		<!-- [89] -->
+		Tio Itau
+		<span id="account_balance_89">
+			R$ -1500.00  
+		</span>
+	  </a>
+	
+	</li>
+  
+</ul>
+
+<!-- previous money display 
+
+	  
+
+-->
+
+	
+	</li>
+  
+	<li class="collapsable">
+	  
+		<div class="hitarea collapsable-hitarea"></div>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;Expense&#39;);" title="Expense">
+		<!-- [3] -->
+		Expenses
+		<span id="account_balance_3">
+			R$ 17949.14  
+		</span>
+	  </a>
+	
+	  
+
+
+
+<ul style="">
+
+
+  
+	<li class="collapsable">
+	  
+		<div class="hitarea collapsable-hitarea"></div>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;BOOK&#39;);" title="BOOK">
+		<!-- [12] -->
+		Bancas, livros, papelaria
+		<span id="account_balance_12">
+			R$ 803.97  
+		</span>
+	  </a>
+	
+	  
+
+
+
+<ul style="">
+
+
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;GIBI&#39;);" title="GIBI">
+		<!-- [63] -->
+		Gibis
+		<span id="account_balance_63">
+			 
+		</span>
+	  </a>
+	
+	</li>
+  
+</ul>
+
+<!-- previous money display 
+
+	  
+
+-->
+
+	
+	</li>
+  
+	<li class="collapsable">
+	  
+		<div class="hitarea collapsable-hitarea"></div>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;BANK&#39;);" title="BANK">
+		<!-- [38] -->
+		Bank fees
+		<span id="account_balance_38">
+			R$ 73.30  
+		</span>
+	  </a>
+	
+	  
+
+
+
+<ul style="">
+
+
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;TARbr&#39;);" title="TARbr">
+		<!-- [65] -->
+		Tarifas Bradesco
+		<span id="account_balance_65">
+			 
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;TARit&#39;);" title="TARit">
+		<!-- [64] -->
+		Tarifas Itau
+		<span id="account_balance_64">
+			 
+		</span>
+	  </a>
+	
+	</li>
+  
+</ul>
+
+<!-- previous money display 
+
+	  
+
+-->
+
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;CLOTH&#39;);" title="CLOTH">
+		<!-- [49] -->
+		Clothing, accessories
+		<span id="account_balance_49">
+			R$ 111.90  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li class="collapsable">
+	  
+		<div class="hitarea collapsable-hitarea"></div>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;COMM&#39;);" title="COMM">
+		<!-- [31] -->
+		Communications
+		<span id="account_balance_31">
+			R$ 97.28  
+		</span>
+	  </a>
+	
+	  
+
+
+
+<ul style="">
+
+
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;CELL&#39;);" title="CELL">
+		<!-- [80] -->
+		Celular
+		<span id="account_balance_80">
+			R$ 0.25  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;CORR&#39;);" title="CORR">
+		<!-- [81] -->
+		Correios
+		<span id="account_balance_81">
+			R$ 32.15  
+		</span>
+	  </a>
+	
+	</li>
+  
+</ul>
+
+<!-- previous money display 
+
+	  
+
+-->
+
+	
+	</li>
+  
+	<li class="collapsable">
+	  
+		<div class="hitarea collapsable-hitarea"></div>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;MED&#39;);" title="MED">
+		<!-- [18] -->
+		Doctor and Medications
+		<span id="account_balance_18">
+			R$ 2931.25  
+		</span>
+	  </a>
+	
+	  
+
+
+
+<ul style="">
+
+
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;DENT&#39;);" title="DENT">
+		<!-- [71] -->
+		Dentista
+		<span id="account_balance_71">
+			R$ 380.00  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;MEDS&#39;);" title="MEDS">
+		<!-- [69] -->
+		Medications
+		<span id="account_balance_69">
+			 
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;PSIQ&#39;);" title="PSIQ">
+		<!-- [70] -->
+		Psiquiatra
+		<span id="account_balance_70">
+			R$ 300.00  
+		</span>
+	  </a>
+	
+	</li>
+  
+</ul>
+
+<!-- previous money display 
+
+	  
+
+-->
+
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;ELEC&#39;);" title="ELEC">
+		<!-- [22] -->
+		Electronics, multimedia
+		<span id="account_balance_22">
+			R$ 469.40  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;ENT&#39;);" title="ENT">
+		<!-- [47] -->
+		Entertainment, shows
+		<span id="account_balance_47">
+			R$ 100.00  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li class="collapsable">
+	  
+		<div class="hitarea collapsable-hitarea"></div>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;GROC&#39;);" title="GROC">
+		<!-- [11] -->
+		Groceries
+		<span id="account_balance_11">
+			R$ 1312.39  
+		</span>
+	  </a>
+	
+	  
+
+
+
+<ul style="">
+
+
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;MERC&#39;);" title="MERC">
+		<!-- [72] -->
+		Mercadinho
+		<span id="account_balance_72">
+			R$ 23.70  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;PAO&#39;);" title="PAO">
+		<!-- [75] -->
+		Pao de Acucar
+		<span id="account_balance_75">
+			R$ 21.85  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;PEIX&#39;);" title="PEIX">
+		<!-- [76] -->
+		Peixaria
+		<span id="account_balance_76">
+			R$ 119.74  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;SAC&#39;);" title="SAC">
+		<!-- [73] -->
+		Sacolao
+		<span id="account_balance_73">
+			R$ 129.08  
+		</span>
+	  </a>
+	
+	</li>
+  
+</ul>
+
+<!-- previous money display 
+
+	  
+
+-->
+
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;HOME&#39;);" title="HOME">
+		<!-- [23] -->
+		Household items
+		<span id="account_balance_23">
+			R$ 533.20  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li class="collapsable">
+	  
+		<div class="hitarea collapsable-hitarea"></div>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;PRES&#39;);" title="PRES">
+		<!-- [25] -->
+		Presentes
+		<span id="account_balance_25">
+			R$ 1807.61  
+		</span>
+	  </a>
+	
+	  
+
+
+
+<ul style="">
+
+
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;DOAC&#39;);" title="DOAC">
+		<!-- [82] -->
+		Doacoes
+		<span id="account_balance_82">
+			R$ 1100.00  
+		</span>
+	  </a>
+	
+	</li>
+  
+</ul>
+
+<!-- previous money display 
+
+	  
+
+-->
+
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;RACE&#39;);" title="RACE">
+		<!-- [83] -->
+		Races
+		<span id="account_balance_83">
+			R$ 175.00  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li class="collapsable">
+	  
+		<div class="hitarea collapsable-hitarea"></div>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;FOOD&#39;);" title="FOOD">
+		<!-- [19] -->
+		Restaurantes, Junk
+		<span id="account_balance_19">
+			R$ 2494.43  
+		</span>
+	  </a>
+	
+	  
+
+
+
+<ul style="">
+
+
+  
+	<li class="collapsable">
+	  
+		<div class="hitarea collapsable-hitarea"></div>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;BAR&#39;);" title="BAR">
+		<!-- [68] -->
+		Bares
+		<span id="account_balance_68">
+			R$ 46.63  
+		</span>
+	  </a>
+	
+	  
+
+
+
+<ul style="">
+
+
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;BOUL&#39;);" title="BOUL">
+		<!-- [74] -->
+		Boulevard
+		<span id="account_balance_74">
+			R$ 46.63  
+		</span>
+	  </a>
+	
+	</li>
+  
+</ul>
+
+<!-- previous money display 
+
+	  
+
+-->
+
+	
+	</li>
+  
+	<li class="collapsable">
+	  
+		<div class="hitarea collapsable-hitarea"></div>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;JUNK&#39;);" title="JUNK">
+		<!-- [67] -->
+		Junk food
+		<span id="account_balance_67">
+			R$ 237.26  
+		</span>
+	  </a>
+	
+	  
+
+
+
+<ul style="">
+
+
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;BACIO&#39;);" title="BACIO">
+		<!-- [77] -->
+		Bacio di Latte
+		<span id="account_balance_77">
+			R$ 22.00  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;FUTU&#39;);" title="FUTU">
+		<!-- [84] -->
+		Futurama
+		<span id="account_balance_84">
+			R$ 91.86  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;STM&#39;);" title="STM">
+		<!-- [85] -->
+		St. Marche
+		<span id="account_balance_85">
+			R$ 70.90  
+		</span>
+	  </a>
+	
+	</li>
+  
+</ul>
+
+<!-- previous money display 
+
+	  
+
+-->
+
+	
+	</li>
+  
+	<li class="collapsable">
+	  
+		<div class="hitarea collapsable-hitarea"></div>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;REST&#39;);" title="REST">
+		<!-- [66] -->
+		Restaurantes
+		<span id="account_balance_66">
+			R$ 306.61  
+		</span>
+	  </a>
+	
+	  
+
+
+
+<ul style="">
+
+
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;PIZZ&#39;);" title="PIZZ">
+		<!-- [86] -->
+		Pizzas
+		<span id="account_balance_86">
+			R$ 73.00  
+		</span>
+	  </a>
+	
+	</li>
+  
+</ul>
+
+<!-- previous money display 
+
+	  
+
+-->
+
+	
+	</li>
+  
+</ul>
+
+<!-- previous money display 
+
+	  
+
+-->
+
+	
+	</li>
+  
+	<li class="collapsable">
+	  
+		<div class="hitarea collapsable-hitarea"></div>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;SELF&#39;);" title="SELF">
+		<!-- [30] -->
+		Self-care, haircuts
+		<span id="account_balance_30">
+			R$ 4368.30  
+		</span>
+	  </a>
+	
+	  
+
+
+
+<ul style="">
+
+
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;AULA&#39;);" title="AULA">
+		<!-- [87] -->
+		Aulas, classes
+		<span id="account_balance_87">
+			R$ 240.00  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;FOODs&#39;);" title="FOODs">
+		<!-- [20] -->
+		Comida
+		<span id="account_balance_20">
+			R$ 3231.30  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;HAIR&#39;);" title="HAIR">
+		<!-- [88] -->
+		Haircuts
+		<span id="account_balance_88">
+			R$ 15.00  
+		</span>
+	  </a>
+	
+	</li>
+  
+</ul>
+
+<!-- previous money display 
+
+	  
+
+-->
+
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;SVC&#39;);" title="SVC">
+		<!-- [24] -->
+		Services
+		<span id="account_balance_24">
+			R$ 737.00  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li class="collapsable">
+	  
+		<div class="hitarea collapsable-hitarea"></div>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;TR&#39;);" title="TR">
+		<!-- [29] -->
+		Transportation
+		<span id="account_balance_29">
+			R$ 443.80  
+		</span>
+	  </a>
+	
+	  
+
+
+
+<ul style="">
+
+
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;METRO&#39;);" title="METRO">
+		<!-- [78] -->
+		Metro
+		<span id="account_balance_78">
+			R$ 46.65  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;BUS&#39;);" title="BUS">
+		<!-- [79] -->
+		Onibus
+		<span id="account_balance_79">
+			R$ 54.00  
+		</span>
+	  </a>
+	
+	</li>
+  
+</ul>
+
+<!-- previous money display 
+
+	  
+
+-->
+
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;TRAV&#39;);" title="TRAV">
+		<!-- [52] -->
+		Travel
+		<span id="account_balance_52">
+			R$ 890.00  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;EXP&#39;);" title="EXP">
+		<!-- [14] -->
+		Uncategorized Expenses
+		<span id="account_balance_14">
+			R$ 600.31  
+		</span>
+	  </a>
+	
+	</li>
+  
+</ul>
+
+<!-- previous money display 
+
+	  
+
+-->
+
+	
+	</li>
+  
+	<li class="collapsable">
+	  
+		<div class="hitarea collapsable-hitarea"></div>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;Income&#39;);" title="Income">
+		<!-- [6] -->
+		Income
+		<span id="account_balance_6">
+			R$ 17853.23  
+		</span>
+	  </a>
+	
+	  
+
+
+
+<ul style="">
+
+
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;BRjur&#39;);" title="BRjur">
+		<!-- [53] -->
+		Bradesco juros poupanca
+		<span id="account_balance_53">
+			R$ 24.66  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;CGDin&#39;);" title="CGDin">
+		<!-- [50] -->
+		CGD acoes juros divs
+		<span id="account_balance_50">
+			R$ 219.34  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;FAM&#39;);" title="FAM">
+		<!-- [26] -->
+		Family
+		<span id="account_balance_26">
+			 
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;FOUND&#39;);" title="FOUND">
+		<!-- [90] -->
+		Found
+		<span id="account_balance_90">
+			R$ 1.00  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;ITjur&#39;);" title="ITjur">
+		<!-- [27] -->
+		Itau juros
+		<span id="account_balance_27">
+			R$ 829.86  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;PTLsal&#39;);" title="PTLsal">
+		<!-- [9] -->
+		Pontual salario
+		<span id="account_balance_9">
+			R$ 16778.37  
+		</span>
+	  </a>
+	
+	</li>
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;INC&#39;);" title="INC">
+		<!-- [15] -->
+		Uncategorized Income
+		<span id="account_balance_15">
+			 
+		</span>
+	  </a>
+	
+	</li>
+  
+</ul>
+
+<!-- previous money display 
+
+	  
+
+-->
+
+	
+	</li>
+  
+	<li class="collapsable">
+	  
+		<div class="hitarea collapsable-hitarea"></div>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;Liability&#39;);" title="Liability">
+		<!-- [5] -->
+		Liabilities
+		<span id="account_balance_5">
+			 
+		</span>
+	  </a>
+	
+	  
+
+
+
+<ul style="">
+
+
+  
+	<li>
+	  
+	  
+	  <a onclick="tree_account_click_handler(&#39;CRED&#39;);" title="CRED">
+		<!-- [28] -->
+		Credit Card
+		<span id="account_balance_28">
+			 
+		</span>
+	  </a>
+	
+	</li>
+  
+</ul>
+
+<!-- previous money display 
+
+	  
+
+-->
+
+	
+	</li>
+  
+</ul>
+
+<!-- previous money display 
+
+	  
+
+-->
+
+</div>
+
+</div>
+
+<!-- MAIN DIV -->
+<div id="main_div">
+  Welcome to VertFolia, tina!
+  <i>LOGIN / LOGOUT</i> [ <a href="http://127.0.0.1:8000/admin/" target="vertfolia_admin">admin</a> ]
+
+<!--3/7/2014 22:25 (UTC 1:25) -->
+
+<hr>
+
+<!-- TIME WINDOW -->
+<form id="time_window_form">
+  <input type="hidden" name="csrfmiddlewaretoken" value="doZz3OdpL3qfD9Z4FCgerVQAGUINDM1O">
+  
+  <i><a id="earliest_date_autofill" href="http://127.0.0.1:8000/vertfolia/?#">All dates</a></i> |
+  <i><a id="last_year_autofill" href="http://127.0.0.1:8000/vertfolia/?#">365 days back</a></i> |
+  <i><a id="last_month_autofill" href="http://127.0.0.1:8000/vertfolia/?#">30 days back</a></i> |
+  <i><a id="last_week_autofill" href="http://127.0.0.1:8000/vertfolia/?#">Last week</a></i> |
+  <i><a id="same_day_autofill" href="http://127.0.0.1:8000/vertfolia/?#">Same day</a></i><br>
+  
+  <br>	
+  Start: <input type="text" id="start_date" name="start_date_formatted" value="20/3/2014" size="8" class="hasDatepicker">
+  
+  End: <input type="text" id="end_date" name="end_date_formatted" value="3/7/2014" size="8" class="hasDatepicker"> <a onclick="$(&#39;#end_date&#39;).val(&#39;3/7/2014&#39;); update_views();">(end=today)</a>
+
+</form>
+  
+
+  <!-- TABS -->
+  <div id="tabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+	<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist">
+	<li class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0" aria-controls="tabs_add_transaction" aria-labelledby="ui-id-1" aria-selected="true"><a href="http://127.0.0.1:8000/vertfolia/#tabs_add_transaction" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-1"><b>Add transaction</b></a></li>
+	<li class="ui-state-default ui-corner-top" role="tab" tabindex="-1" aria-controls="tabs_view_transactions" aria-labelledby="view_transactions_tab_link" aria-selected="false"><a href="http://127.0.0.1:8000/vertfolia/#tabs_view_transactions" id="view_transactions_tab_link" class="ui-tabs-anchor" role="presentation" tabindex="-1"><b>View transactions</b></a></li>
+	<li class="ui-state-default ui-corner-top" role="tab" tabindex="-1" aria-controls="tabs_daily_expenses" aria-labelledby="ui-id-2" aria-selected="false"><a href="http://127.0.0.1:8000/vertfolia/#tabs_daily_expenses" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-2"><b>Daily expenses</b></a></li>
+	<li class="ui-state-default ui-corner-top" role="tab" tabindex="-1" aria-controls="tabs_search" aria-labelledby="ui-id-3" aria-selected="false"><a href="http://127.0.0.1:8000/vertfolia/#tabs_search" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-3"><b>Search</b></a></li>
+
+	<div id="tabs_add_transaction" aria-labelledby="ui-id-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom" role="tabpanel" aria-expanded="true" aria-hidden="false">
+	  <br><br>
+	  <form id="add_transaction_form">
+		<!-- action="/vertfolia/add_transaction/" method="get"> -->
+		<input type="hidden" name="csrfmiddlewaretoken" value="doZz3OdpL3qfD9Z4FCgerVQAGUINDM1O">
+
+		Date: <input id="add_transaction_day" name="day" size="10" value="3/7/2014" class="hasDatepicker">
+		<!-- Time: <input id="add_transaction_time" name="time" size="10" value="22:25:41"> -->
+		Time: <input id="add_transaction_time" name="time" size="10">
+		
+		<br>
+		
+		desc: <input type="text" name="description" size="40" id="add_transaction_description"><br>
+		value: <input type="text" name="value" size="10"><br>
+  
+		debit acct: <span role="status" aria-live="polite" class="ui-helper-hidden-accessible"></span><input type="text" name="debit" size="9" id="add_transaction_debit_name" class="ui-autocomplete-input" autocomplete="off">
+		credit acct: <span role="status" aria-live="polite" class="ui-helper-hidden-accessible"></span><input type="text" name="credit" size="9" id="add_transaction_credit_name" class="ui-autocomplete-input" autocomplete="off">
+
+		<br>
+  
+  <!-- Click interface -->
+<!--  debit acct num: <input type="text" name="debit" size="4" id="add_transaction_debit_id" onclick="selected_field='add_transaction_debit'; this.value='<< click';">
+  credit acct num: <input type="text" name="credit" size="4" id="add_transaction_credit_id" onclick="selected_field='add_transaction_credit'; this.value='<< click';;">
+  -->
+
+		<input type="submit">
+	  </form>
+	  <pre class="transactions_list"><div id="latest_transactions">Thu 03/07/14 R$ 207.10 CGDac/OPEN Correction to equal declaracao
+Thu 03/07/14 R$ 1.00 COIN/WAL xfer
+Thu 03/07/14 R$ 2.50 BOUL/WAL Leite C
+Thu 03/07/14 R$ 20.00 WLbak/DRW xfer
+Thu 03/07/14 R$ 3.00 METRO/FID Volta PTL Metro
+Thu 03/07/14 R$ 3.00 BUS/BILH Ida PTL
+Thu 03/07/14 R$ 63.35 REST/ITcor Mestico curry frango suco manga
+Thu 03/07/14 R$ 3.60 BOUL/WAL Aveia Quaker
+Thu 03/07/14 R$ 3.90 JUNK/WAL Pudim Bela Cintra
+Thu 03/07/14 R$ 20.00 WAL/WLbak xfer
+Wed 02/07/14 R$ 109.74 ITpou/ITjur juros
+Wed 02/07/14 R$ 0.47 ITcor/ITjur juros diario
+Wed 02/07/14 R$ 1.00 COIN/FOUND near Republica
+Wed 02/07/14 R$ 20.00 WAL/DRW xfer
+Wed 02/07/14 R$ 10.00 DRW/WAL xfer
+</div></pre>
+	  
+	  <form id="latest_transactions_form">
+		<input type="hidden" name="csrfmiddlewaretoken" value="doZz3OdpL3qfD9Z4FCgerVQAGUINDM1O">
+	  </form>
+	  
+	</div> <!-- close add_transaction -->
+
+	<div id="tabs_view_transactions" aria-labelledby="view_transactions_tab_link" class="ui-tabs-panel ui-widget-content ui-corner-bottom" role="tabpanel" aria-expanded="false" aria-hidden="true" style="display: none;">
+	  <br><br>
+
+	  <form id="view_transactions_form">
+		<input type="hidden" name="csrfmiddlewaretoken" value="doZz3OdpL3qfD9Z4FCgerVQAGUINDM1O">
+
+		include children accounts <input type="checkbox" name="include_children" onchange="$(&#39;#view_transactions_form&#39;).submit()" checked=""> <a onclick="$(&#39;#active_account&#39;).val(&#39;tina&#39;); $(&#39;#view_transactions_form&#39;).submit();">(click here to set 'tina')</a><br>
+		
+		Account short name: <span role="status" aria-live="polite" class="ui-helper-hidden-accessible"></span><input type="text" name="active_account" id="active_account" size="8" value="tina" onclick="this.value=&#39;&#39;" class="ui-autocomplete-input" autocomplete="off">
+		<input type="submit">
+	  </form>
+
+	  <div id="transactions"></div>
+	</div>
+
+	<div id="tabs_daily_expenses" aria-labelledby="ui-id-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom" role="tabpanel" aria-expanded="false" aria-hidden="true" style="display: none;">
+	  <br><br>
+	  
+	  <form id="daily_expenses_form">
+		<input type="hidden" name="csrfmiddlewaretoken" value="doZz3OdpL3qfD9Z4FCgerVQAGUINDM1O">
+		<input type="submit" value="Refresh list"> (will not auto-update when adding transactions)
+	  </form>
+	  <pre class="transactions_list"><div id="daily_expenses"></div></pre>
+	
+	</div> <!-- CLOSE DAILY EXPENSES TAB -->
+
+	<div id="tabs_search" aria-labelledby="ui-id-3" class="ui-tabs-panel ui-widget-content ui-corner-bottom" role="tabpanel" aria-expanded="false" aria-hidden="true" style="display: none;">
+	  <br><br>
+	  
+	  <form id="search_form">
+		<input type="hidden" name="csrfmiddlewaretoken" value="doZz3OdpL3qfD9Z4FCgerVQAGUINDM1O">
+		<input type="text" name="search_parameter" id="search_text" size="30">
+		<input type="submit"><br>(will not auto-update when adding transactions)
+	  </form>
+	  <div id="search_results"></div>
+	
+	</div> <!-- CLOSE SEARCH TAB -->
+
+  </ul></div> <!-- CLOSE TABS -->
+  
+  <br><br>
+  
+
+</div> <!-- main div -->
+  
+<script>
+
+// Set current time
+$("#add_transaction_time").val(get_timestamp());
+  
+function days_back(delta_days) {
+  var end_date_string = $("#end_date").val();
+  var end_date_components = end_date_string.split("/");
+
+  var today = new Date(end_date_components[2], end_date_components[1] - 1,
+					   end_date_components[0]);
+  var today_in_millis = today.valueOf();
+  var millis_difference = delta_days * 24 * 60 * 60 * 1000;
+  var previous_date = new Date(today_in_millis - millis_difference);
+
+  return previous_date.getUTCDate() + "/" + (previous_date.getUTCMonth() + 1) + "/" + previous_date.getUTCFullYear();
+}
+
+function add_autofill_handler(id, days) {
+  $(id).click(function (event) {
+	$("#start_date").val(days_back(days));
+	update_views();
+	event.preventDefault();
+  });
+}
+
+// RESET TIME WINDOW
+$("#earliest_date_autofill").click(function (event) {
+  $("#start_date").val("20/3/2014");
+  $("#end_date").val("3/7/2014");
+  update_views();
+  event.preventDefault();
+});
+
+add_autofill_handler("#last_year_autofill", 365);
+add_autofill_handler("#last_month_autofill", 30);
+add_autofill_handler("#last_week_autofill", 6);
+add_autofill_handler("#same_day_autofill", 0);
+
+/////////////////
+// AJAX
+/////////////////
+
+
+// Add transaction > update tree > update latest
+
+var request;
+
+function update_views() {
+  var form = $("#time_window_form");
+  var serializedData = form.serialize();
+
+  if (request) {
+	request.abort();
+  }
+  
+  request = $.ajax({
+	url: "/vertfolia/update_tree/",
+	type: "POST",
+	data: serializedData
+  });
+
+  request.done(function (response, textStatus, jqXHR) {
+	  $.each(response, function (key, val) {
+		// update tree balances
+		$('#account_balance_'+key).html(val);
+	  });
+	  
+	  // update "View transactions" tab
+	// if ($("#active_account").val() != "") {
+	//	$("#view_transactions_form").submit();
+	//  }
+
+    $("#latest_transactions_form").submit();
+  });
+  request.fail(function (jqXHR, textStatus, errorThrown) {
+	alert("update tree error: " + errorThrown);
+  });
+
+  request.always(function () {
+	//	  alert("always update tree");
+  });
+  
+}
+
+// on date change
+$("#start_date").change(function (event) {
+  update_views();
+});
+$("#end_date").change(function (event) {
+  update_views();
+});
+
+  
+  $("#add_transaction_form").submit(function (event) {
+	if (request) {
+	  request.abort();
+	}
+
+	var form = $(this);
+	var inputs = form.find("input");
+	var serializedData = form.serialize();
+
+	inputs.prop("disabled", true);
+	request = $.ajax({
+	  url: "/vertfolia/add_transaction/",
+	  type: "POST",
+	  data: serializedData
+	});
+
+	request.done(function (response, textStatus, jqXHR) {
+	  update_views();
+	  // $("#latest_transactions_form").submit();
+	});
+
+	request.fail(function (jqXHR, textStatus, errorThrown) {
+	  alert("ADD TRANSACTION error: " + errorThrown);
+	});
+
+	request.always(function () {
+	  inputs.prop("disabled", false);
+	  $("#add_transaction_form").find("input[type=text]").val("");
+      $("#add_transaction_time").val(get_timestamp());
+	  $("#add_transaction_description").focus();
+	});
+
+	event.preventDefault();
+  });
+
+$("#view_transactions_form").submit(function (event) {
+  $("#transactions").html("Please wait");
+  
+  if (request) {
+	request.abort();
+  }
+  var form = $(this);
+  var serializedData = form.serialize();
+
+  // add date info from time_window / = %2F
+  serializedData += "&start_date_formatted=" + $("#start_date").val().replace(/\//g, "%2F");
+  serializedData += "&end_date_formatted=" + $("#end_date").val().replace(/\//g, "%2F");
+  
+  request = $.ajax({
+	url: "/vertfolia/view_transactions/",
+	type: "POST",
+	data: serializedData
+  });
+
+  request.done(function (response, textStatus, jqXHR) {
+	$("#transactions").html(response);
+	// $("#latest_transactions_form").submit();
+  });
+
+  request.fail(function (jqXHR, textStatus, errorThrown) {
+	alert("VIEW TRANSACTIONS error: " + errorThrown);
+  });
+
+  request.always(function () {
+	$("#active_account").autocomplete("close");
+  });
+
+  event.preventDefault();  
+});
+
+$("#latest_transactions_form").submit(function (event) {
+  if (request) {
+	request.abort();
+  }
+
+  var form=$(this);
+  var serializedData = form.serialize();
+  
+  request = $.ajax({
+	url: "/vertfolia/view_latest_transactions/",
+	type: "POST",
+	data: serializedData
+  });
+
+  request.done(function (response, textStatus, jqXHR) {
+	$("#latest_transactions").html(response);
+  });
+
+  request.fail(function (jqXHR, textStatus, errorThrown) {
+	alert("VIEW LATEST TRANSACTIONS error: " + errorThrown);
+  });
+
+  request.always(function () {
+
+  });
+
+  event.preventDefault();
+});
+
+$("#daily_expenses_form").submit(function (event) {
+  $("#daily_expenses").html("Please wait");
+
+  if (request) {
+	request.abort();
+  }
+  var form = $(this);
+  var serializedData = form.serialize();
+
+  // add date info from time_window / = %2F
+  serializedData += "&start_date_formatted=" + $("#start_date").val().replace(/\//g, "%2F");
+  serializedData += "&end_date_formatted=" + $("#end_date").val().replace(/\//g, "%2F");
+  
+  request = $.ajax({
+	url: "/vertfolia/view_daily_expenses/",
+	type: "POST",
+	data: serializedData
+  });
+
+  request.done(function (response, textStatus, jqXHR) {
+	$("#daily_expenses").html(response);
+  });
+
+  request.fail(function (jqXHR, textStatus, errorThrown) {
+	alert("Daily Expenses error: " + errorThrown);
+  });
+
+  request.always(function () {
+
+  });
+
+  event.preventDefault();  
+});
+
+$("#search_form").submit(function (event) {
+  if (request) {
+	request.abort();
+  }
+  var form = $(this);
+  var serializedData = form.serialize();
+
+  request = $.ajax({
+	url: "/vertfolia/search/",
+	type: "POST",
+	data: serializedData
+  });
+
+  request.done(function (response, textStatus, jqXHR) {
+	$("#search_results").html(response);
+  });
+
+  request.fail(function (jqXHR, textStatus, errorThrown) {
+	alert("Search error: " + errorThrown);
+  });
+
+  request.always(function () {
+	$("#search_text").val("");
+  });
+
+  event.preventDefault();  
+});
+
+</script>
+
+
+<div id="ui-datepicker-div" class="ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all"></div><ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-4" tabindex="0" style="display: none;"></ul><ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-5" tabindex="0" style="display: none;"></ul><ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-6" tabindex="0" style="display: none;"></ul></body></html>
