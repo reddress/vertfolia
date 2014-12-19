@@ -217,7 +217,8 @@ def view_daily_expenses(request):
     daily_transactions = {}
     days_list = []
 
-    delta_days = (end_date_count-start_date).days + 1
+    # delta_days = (end_date_count-start_date).days + 1
+    delta_days = (datetime.strptime(request.POST["end_date_formatted"], "%d/%m/%Y") - datetime.strptime(request.POST["start_date_formatted"], "%d/%m/%Y")).days + 1
     for n in range(delta_days):
         day = (start_date + timedelta(n)).strftime("%Y-%m-%d")
         days_list.append(day)
@@ -226,11 +227,16 @@ def view_daily_expenses(request):
 
     for transaction in raw_transactions:
         date_key = localtime(transaction.date.replace(tzinfo=utc)).strftime("%Y-%m-%d")
-        
+
+        # if date_key not in daily_totals:
+            # days_list.append(date_key)
+            # daily_totals[date_key] = 0
+            # daily_transactions[date_key] = []
+        # else:
         daily_totals[date_key] += transaction.value
         daily_transactions[date_key].append("    " + format_transaction_short(transaction))
 
-    for day in days_list:
+    for day in sorted(days_list):
         daily_header[day] = "%s %.2f" % (datetime.strptime(day, "%Y-%m-%d").strftime("%a %d/%m/%y"), daily_totals[day])
         
     return render_to_response("vertfolia/daily_expenses_table.html",
